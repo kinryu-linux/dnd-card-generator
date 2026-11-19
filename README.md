@@ -51,7 +51,9 @@ The included data covers D&D 2024 (5.5e) rules:
 
 ## Editing card data
 
-**Option A — in the app:** Use **Export ZIP** to download your current data, edit the JSON files in a text editor, then re-import with **Load Data (ZIP)** using whichever merge option fits.
+**In the app:** Double-click any row to edit or delete that card. Click **＋ New Card** to create a new one. Changes are saved automatically to local storage.
+
+**Bulk editing:** Use **Export ZIP** to download your current data as nicely formatted JSON, edit the files in a text editor, then re-import with **Load Data (ZIP)** using whichever merge option fits.
 
 The exported JSON is formatted for readability — objects are indented, and simple arrays (like class lists) stay on one line:
 
@@ -64,15 +66,6 @@ The exported JSON is formatted for readability — objects are indented, and sim
   "description": "..."
 }
 ```
-
-**Option B — from source:** Edit the files in `_source/data/` and regenerate:
-
-```
-python _source/split_data.py
-python _source/package_data.py
-```
-
-Then re-import the new `cards-data.zip`.
 
 ## Card schema
 
