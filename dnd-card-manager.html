@@ -611,6 +611,9 @@ td input[type="checkbox"] {
   <span id="selected-label"></span>
   <div class="sep"></div>
   <button class="btn success" id="btn-print">🖨 Print Selected</button>
+  <label style="font-size:13px;display:flex;align-items:center;gap:4px;cursor:pointer;user-select:none" title="Print cards in landscape orientation (wider than tall)">
+    <input type="checkbox" id="chk-landscape"> Landscape
+  </label>
   <span class="count" id="count-label"></span>
   <a href="https://github.com/kinryu-linux/dnd-card-generator#readme" target="_blank" rel="noopener" class="btn" title="Help / README" style="margin-left:auto;font-size:13px;padding:4px 10px;text-decoration:none">?</a>
 </div>
@@ -1530,11 +1533,15 @@ function buildPrintPages() {
   const out = document.getElementById('print-output');
   out.innerHTML = '';
 
+  const landscape = document.getElementById('chk-landscape').checked;
+  const pageW = landscape ? '297mm' : '210mm';
+  const pageH = landscape ? '210mm' : '297mm';
+
   for (let i = 0; i < cards.length; i += 4) {
     const chunk = cards.slice(i, i + 4);
     const page  = document.createElement('div');
     // Apply layout inline so fitText can measure correctly off-screen
-    page.style.cssText = 'width:210mm;height:297mm;padding:7mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(2,1fr);gap:4mm;overflow:hidden;box-sizing:border-box;';
+    page.style.cssText = `width:${pageW};height:${pageH};padding:7mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(2,1fr);gap:4mm;overflow:hidden;box-sizing:border-box;`;
 
     chunk.forEach(card => {
       const slot = document.createElement('div');
@@ -1561,6 +1568,10 @@ function buildPrintPages() {
       out.querySelectorAll('.card-title').forEach(fitTitle);
       // Restore hidden — @media print will show it correctly
       out.style.cssText = '';
+      const pageStyle = document.createElement('style');
+      pageStyle.textContent = `@page { size: A4 ${landscape ? 'landscape' : 'portrait'}; margin: 0; }`;
+      document.head.appendChild(pageStyle);
+      window.addEventListener('afterprint', () => pageStyle.remove(), { once: true });
       window.print();
     });
   });
