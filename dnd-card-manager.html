@@ -586,7 +586,7 @@ td input[type="checkbox"] {
   <button class="btn danger" id="btn-clear" style="display:none" title="Clear localStorage and reload">🗑 Clear Data</button>
   <button class="btn" id="btn-new-card" style="display:none">＋ New Card</button>
   <div class="sep"></div>
-  <input type="text" id="search-input" placeholder="Search name, school, class…">
+  <input type="text" id="search-input" placeholder="Search name, description, school, class…">
   <div class="sep"></div>
   <button class="btn" id="btn-select-all">Select All Filtered</button>
   <button class="btn" id="btn-deselect-all">Deselect All</button>
@@ -1162,7 +1162,13 @@ function getFiltered() {
     }
 
     if (search) {
-      const haystack = [d.name, ...(d.classes || []), d.school || '', d.category || '', d.rarity || ''].join(' ').toLowerCase();
+      const haystack = [
+        d.name, d.school, d.category, d.rarity, d.source,
+        d.castTime, d.range, d.components, d.duration,
+        d.description, d.higherLevel, d.masteryProperty, d.masteryText,
+        ...(d.classes || []),
+        ...(d.subEntries || []).map(e => e.label + ' ' + e.text),
+      ].filter(Boolean).join(' ').toLowerCase();
       if (!haystack.includes(search)) return false;
     }
 
