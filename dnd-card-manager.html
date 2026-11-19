@@ -585,6 +585,20 @@ td input[type="checkbox"] {
   <button class="btn" id="btn-export" style="display:none">💾 Export ZIP</button>
   <button class="btn danger" id="btn-clear" style="display:none" title="Clear localStorage and reload">🗑 Clear Data</button>
   <button class="btn" id="btn-new-card" style="display:none">＋ New Card</button>
+  <div class="sep" id="sep-random" style="display:none"></div>
+  <select id="random-level" style="display:none" title="Spell level for random pick">
+    <option value="">Any level</option>
+    <option value="0">Cantrip</option>
+    <option value="1">Level 1</option><option value="2">Level 2</option>
+    <option value="3">Level 3</option><option value="4">Level 4</option>
+    <option value="5">Level 5</option><option value="6">Level 6</option>
+    <option value="7">Level 7</option><option value="8">Level 8</option>
+    <option value="9">Level 9</option>
+  </select>
+  <button class="btn" id="btn-random-spell" style="display:none" title="Add a random spell to selection">🎲 Spell</button>
+  <button class="btn" id="btn-random-weapon" style="display:none" title="Add a random weapon to selection">🎲 Weapon</button>
+  <button class="btn" id="btn-random-armour" style="display:none" title="Add a random armour to selection">🎲 Armour</button>
+  <button class="btn" id="btn-random-magic" style="display:none" title="Add a random magic item to selection">🎲 Magic Item</button>
   <div class="sep"></div>
   <input type="text" id="search-input" placeholder="Search name, description, school, class…">
   <div class="sep"></div>
@@ -678,6 +692,7 @@ td input[type="checkbox"] {
         <th data-sort="level">Level / Category <span class="sort-arrow">↕</span></th>
         <th data-sort="school">School / Rarity <span class="sort-arrow">↕</span></th>
         <th data-sort="source">Source <span class="sort-arrow">↕</span></th>
+        <th data-sort="edition">Edition <span class="sort-arrow">↕</span></th>
         <th data-sort="classes">Classes <span class="sort-arrow">↕</span></th>
       </tr>
     </thead>
@@ -1212,6 +1227,16 @@ function initData(data) {
   document.getElementById('btn-export').style.display = '';
   document.getElementById('btn-clear').style.display = '';
   document.getElementById('btn-new-card').style.display = '';
+  const hasSpells  = data.some(d => d.type === 'spell');
+  const hasWeapons = data.some(d => d.type === 'item' && !d.rarity && d.damage);
+  const hasArmour  = data.some(d => d.type === 'item' && !d.rarity && d.ac);
+  const hasMagic   = data.some(d => d.type === 'item' && d.rarity);
+  document.getElementById('sep-random').style.display        = (hasSpells || hasWeapons || hasArmour || hasMagic) ? '' : 'none';
+  document.getElementById('random-level').style.display      = hasSpells  ? '' : 'none';
+  document.getElementById('btn-random-spell').style.display  = hasSpells  ? '' : 'none';
+  document.getElementById('btn-random-weapon').style.display = hasWeapons ? '' : 'none';
+  document.getElementById('btn-random-armour').style.display = hasArmour  ? '' : 'none';
+  document.getElementById('btn-random-magic').style.display  = hasMagic   ? '' : 'none';
 }
 
 function buildClassChips() {
@@ -1283,6 +1308,7 @@ function getSortValue(d, key) {
     case 'level':   return d.type === 'spell' ? String(d.level).padStart(2, '0') : (d.category || '').toLowerCase();
     case 'school':  return (d.school || d.rarity || '').toLowerCase();
     case 'source':  return (d.source || '').toLowerCase();
+    case 'edition': return d.source === 'SRD 5.1' ? '2014' : '2024';
     case 'classes': return (d.classes || []).join(', ').toLowerCase();
     default:        return '';
   }
@@ -1351,6 +1377,7 @@ function renderTable() {
       <td>${esc(levelCell)}</td>
       <td class="${rarityClass(d.rarity)}">${esc(schoolCell)}</td>
       <td>${esc(d.source || (d.type === 'spell' ? 'PHB' : '—'))}</td>
+      <td style="color:${d.source === 'SRD 5.1' ? '#a8d8ea' : '#888'};font-size:11px">${d.source === 'SRD 5.1' ? '2014' : '2024'}</td>
       <td>${esc((d.classes || []).join(', '))}</td>
     `;
 
@@ -1384,6 +1411,17 @@ function renderTable() {
   const allChecked = sorted.length > 0 && sorted.every(d => selectedIds.has(d.name));
   document.getElementById('check-all').checked = allChecked;
   document.getElementById('check-all').indeterminate = !allChecked && sorted.some(d => selectedIds.has(d.name));
+}
+
+function randomSelect(filterFn) {
+  const pool = ALL_DATA.filter(filterFn);
+  if (!pool.length) { alert('No matching cards found.'); return; }
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  selectedIds.add(pick.name);
+  renderTable();
+  // Scroll to the picked row
+  const row = document.querySelector(`tr[data-id="${CSS.escape(pick.name)}"]`);
+  if (row) row.scrollIntoView({ block: 'center', behavior: 'smooth' });
 }
 
 function toggleSelection(id, tr) {
@@ -1586,6 +1624,18 @@ function wireFilters() {
     selectedIds.clear();
     renderTable();
   });
+
+  // Random selection
+  document.getElementById('btn-random-spell').addEventListener('click', () => {
+    const lvl = document.getElementById('random-level').value;
+    randomSelect(d => d.type === 'spell' && (lvl === '' || d.level === parseInt(lvl)));
+  });
+  document.getElementById('btn-random-weapon').addEventListener('click', () =>
+    randomSelect(d => d.type === 'item' && !d.rarity && !!d.damage));
+  document.getElementById('btn-random-armour').addEventListener('click', () =>
+    randomSelect(d => d.type === 'item' && !d.rarity && !!d.ac));
+  document.getElementById('btn-random-magic').addEventListener('click', () =>
+    randomSelect(d => d.type === 'item' && !!d.rarity));
 
   // Print
   document.getElementById('btn-print').addEventListener('click', buildPrintPages);
