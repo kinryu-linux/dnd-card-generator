@@ -1031,6 +1031,24 @@ function clearStorage() {
 // ================================================================
 //  ZIP IMPORT / EXPORT
 // ================================================================
+function choiceDialog(message, opt1, opt2) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9999';
+    overlay.innerHTML = `
+      <div style="background:#1e2a38;border:1px solid #334;border-radius:8px;padding:28px 32px;max-width:380px;text-align:center">
+        <p style="margin:0 0 20px;color:#ccc;line-height:1.5">${message}</p>
+        <div style="display:flex;gap:12px;justify-content:center">
+          <button id="cd-opt1" class="btn primary">${opt1}</button>
+          <button id="cd-opt2" class="btn">${opt2}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#cd-opt1').onclick = () => { document.body.removeChild(overlay); resolve(1); };
+    overlay.querySelector('#cd-opt2').onclick = () => { document.body.removeChild(overlay); resolve(2); };
+  });
+}
+
 async function importZip(file) {
   try {
     const zip = await JSZip.loadAsync(file);
@@ -1043,9 +1061,39 @@ async function importZip(file) {
     const spells = await readJson('spells.json');
     const items  = await readJson('items.json');
     const magic  = await readJson('magic_items.json');
-    saveToStorage(spells, items, magic);
-    initData([...spells, ...items, ...magic]);
-    alert(`Loaded: ${spells.length} spells, ${items.length} items, ${magic.length} magic items.`);
+    const incoming = [...spells, ...items, ...magic];
+
+    if (!ALL_DATA.length) {
+      // No existing data — just load
+      saveToStorage(spells, items, magic);
+      initData(incoming);
+      alert(`Loaded: ${spells.length} spells, ${items.length} items, ${magic.length} magic items.`);
+      return;
+    }
+
+    const choice = await choiceDialog(
+      `You already have ${ALL_DATA.length} cards loaded.<br>Replace everything, or merge new cards in?`,
+      'Replace', 'Merge'
+    );
+
+    if (choice === 1) {
+      // Replace
+      saveToStorage(spells, items, magic);
+      initData(incoming);
+      alert(`Replaced with: ${spells.length} spells, ${items.length} items, ${magic.length} magic items.`);
+    } else {
+      // Merge — skip duplicates by type + name
+      const existing = new Set(ALL_DATA.map(d => d.type + ':' + d.name));
+      const toAdd = incoming.filter(d => !existing.has(d.type + ':' + d.name));
+      const skipped = incoming.length - toAdd.length;
+      const merged = [...ALL_DATA, ...toAdd];
+      const mergedSpells = merged.filter(d => d.type === 'spell');
+      const mergedItems  = merged.filter(d => d.type === 'item' && !d.rarity);
+      const mergedMagic  = merged.filter(d => d.type === 'item' && d.rarity);
+      saveToStorage(mergedSpells, mergedItems, mergedMagic);
+      initData(merged);
+      alert(`Merged: added ${toAdd.length} new cards, skipped ${skipped} duplicate${skipped !== 1 ? 's' : ''}.`);
+    }
   } catch(e) { alert('Failed to load ZIP: ' + e.message); }
 }
 
