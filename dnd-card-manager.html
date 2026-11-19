@@ -633,7 +633,10 @@ td input[type="checkbox"] {
 <div id="no-data" style="display:none">
   <h2>No Card Data Loaded</h2>
   <p>Import <strong>cards-data.zip</strong> to get started. The zip contains spells.json, items.json, and magic_items.json and will be saved to your browser's local storage.</p>
-  <p style="margin-top:6px"><a href="cards-data.zip" download style="color:#a8d8ea">⬇ Download cards-data.zip</a></p>
+  <p style="margin-top:12px">
+    <button class="btn primary" id="btn-fetch-zip">⬇ Load Data from Server</button>
+  </p>
+  <p style="margin-top:6px;font-size:11px;color:#666">or <a href="cards-data.zip" download style="color:#888">download cards-data.zip</a> and import it manually above</p>
   <div class="drop-zone" id="drop-zone">
     <div>Drop <strong>cards-data.zip</strong> here</div>
     <div style="margin-top:8px;font-size:11px">or click Load Data above</div>
@@ -1044,6 +1047,22 @@ async function importZip(file) {
     initData([...spells, ...items, ...magic]);
     alert(`Loaded: ${spells.length} spells, ${items.length} items, ${magic.length} magic items.`);
   } catch(e) { alert('Failed to load ZIP: ' + e.message); }
+}
+
+async function fetchZip() {
+  const btn = document.getElementById('btn-fetch-zip');
+  btn.textContent = 'Loading…';
+  btn.disabled = true;
+  try {
+    const res = await fetch('cards-data.zip');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const blob = await res.blob();
+    await importZip(blob);
+  } catch(e) {
+    alert('Could not fetch cards-data.zip: ' + e.message);
+    btn.textContent = '⬇ Load Data from Server';
+    btn.disabled = false;
+  }
 }
 
 function prettyJSON(obj) {
@@ -1474,6 +1493,9 @@ function wireFilters() {
     if (e.target.files[0]) importZip(e.target.files[0]);
     e.target.value = '';
   });
+
+  // Fetch from server
+  document.getElementById('btn-fetch-zip').addEventListener('click', fetchZip);
 
   // Export
   document.getElementById('btn-export').addEventListener('click', exportZip);
