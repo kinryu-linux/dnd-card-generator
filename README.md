@@ -74,3 +74,11 @@ The exported JSON is formatted for readability — objects are indented, and sim
 **Item fields:** `type`, `name`, `category`, `cost`, `weight`, `damage`, `damageType`, `ac`, `properties`, `description`, `masteryProperty`, `masteryText`
 
 **Magic item additional fields:** `rarity`, `source`, `consumable`
+
+## Legal
+
+Card text is sourced from D&D 2024 (5.5e) materials © Wizards of the Coast LLC.
+
+Spell and item descriptions that appear in the [Systems Reference Document 5.2](https://www.dndbeyond.com/srd) are used under the [Creative Commons Attribution 4.0 International License (CC-BY-4.0)](https://creativecommons.org/licenses/by/4.0/). Non-SRD content is © Wizards of the Coast and is included here for personal and fan reference use only.
+
+This project is an unofficial fan tool and is not affiliated with, endorsed by, or sponsored by Wizards of the Coast or Hasbro. It is non-commercial and intended for use at your own table. *Dungeons & Dragons* is a trademark of Wizards of the Coast LLC.
