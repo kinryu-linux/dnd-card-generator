@@ -1,0 +1,1530 @@
+[
+  {
+    "type": "item",
+    "name": "Alchemist's Supplies",
+    "category": "Artisan's Tools",
+    "cost": "50 GP",
+    "weight": "8 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Alchemist's Supplies include two glass beakers, a metal frame, a stirring rod, a mortar and pestle, and a pouch of common alchemical ingredients. Proficiency adds your Proficiency Bonus to Intelligence checks to identify potions and poisons and to craft alchemical items such as acid or alchemist's fire. If you also have Arcana or Nature proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Antitoxin",
+    "category": "Potion",
+    "damage": null,
+    "damageType": null,
+    "weight": "0 lb",
+    "cost": "50 GP",
+    "properties": [],
+    "description": "A creature that drinks this vial of liquid gains Advantage on saving throws against poison for 1 hour. It confers no benefit to Undead or Constructs.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Backpack",
+    "category": "Adventuring Gear",
+    "damage": null,
+    "damageType": null,
+    "weight": "5 lb",
+    "cost": "2 GP",
+    "properties": [
+      "Capacity: 30 lb"
+    ],
+    "description": "A leather pack carried on the back. Can hold up to 30 pounds of gear not exceeding 1 cubic foot in volume.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Bagpipes",
+    "category": "Musical Instrument",
+    "cost": "30 GP",
+    "weight": "6 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A wind instrument with a bag reservoir and multiple pipes, known for carrying sound across great distances. Proficiency lets you use Charisma to perform and inspire others with this instrument. If you also have Performance proficiency, you gain Advantage on checks using this instrument.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Battleaxe",
+    "category": "Martial Melee Weapon",
+    "damage": "1d8",
+    "damageType": "Slashing",
+    "weight": "4 lb",
+    "cost": "10 GP",
+    "properties": [
+      "Versatile (1d10)"
+    ],
+    "description": "A single or double-headed axe with a substantial blade, favoured by warriors who want reach and power in one package.",
+    "masteryProperty": "Topple",
+    "masteryText": "If you hit a creature with this weapon, you can force the creature to make a Constitution saving throw (DC 8 + proficiency bonus + attack ability modifier). On a failed save, the creature has the Prone condition."
+  },
+  {
+    "type": "item",
+    "name": "Bedroll",
+    "category": "Adventuring Gear",
+    "damage": null,
+    "damageType": null,
+    "weight": "7 lb",
+    "cost": "1 GP",
+    "properties": [],
+    "description": "You can sleep in a bedroll to gain the benefits of a Long Rest in a wilderness environment. Without a bedroll, sleeping on cold or wet ground may impose Exhaustion at the DM's discretion.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Blowgun",
+    "category": "Martial Ranged Weapon",
+    "damage": "1",
+    "damageType": "Piercing",
+    "weight": "1 lb",
+    "cost": "10 GP",
+    "properties": [
+      "Ammunition (range 25/100)",
+      "Loading"
+    ],
+    "description": "A hollow tube used to propel needles by breath. Beloved by assassins and hunters for its near-silent operation. Darts are often coated with poison to compensate for the weapon's low damage.",
+    "masteryProperty": "Vex",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you have Advantage on your next attack roll against that creature before the end of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Breastplate",
+    "category": "Medium Armour",
+    "damage": null,
+    "damageType": null,
+    "weight": "20 lb",
+    "cost": "400 GP",
+    "properties": [],
+    "description": "This armour consists of a fitted metal chest piece worn with supple leather. Although it leaves the legs and arms relatively unprotected, this armour provides good protection for the wearer's vital organs.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "AC 14 + DEX modifier (max +2)"
+  },
+  {
+    "type": "item",
+    "name": "Brewer's Supplies",
+    "category": "Artisan's Tools",
+    "cost": "20 GP",
+    "weight": "9 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Brewer's Supplies include a large glass jug, a quantity of hops, a siphon, and several feet of tubing. Proficiency adds your Proficiency Bonus to Intelligence checks to craft ales and other beverages and to identify drinks and their effects. If you also have Medicine or Survival proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Calligrapher's Supplies",
+    "category": "Artisan's Tools",
+    "cost": "10 GP",
+    "weight": "5 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Calligrapher's Supplies include ink, a dozen sheets of parchment, and three quills. Proficiency adds your Proficiency Bonus to Dexterity checks to craft beautiful script, decipher handwriting, and forge or authenticate documents. If you also have History or Perception proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Carpenter's Tools",
+    "category": "Artisan's Tools",
+    "cost": "8 GP",
+    "weight": "6 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Carpenter's Tools include a saw, a hammer, nails, a hatchet, a square, a ruler, an adze, a plane, and a chisel. Proficiency adds your Proficiency Bonus to Strength checks to construct or assess wooden structures and objects. If you also have Perception or Stealth proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Cartographer's Tools",
+    "category": "Artisan's Tools",
+    "cost": "15 GP",
+    "weight": "6 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Cartographer's Tools include a quill, ink, parchment, a pair of compasses, calipers, and a ruler. Proficiency adds your Proficiency Bonus to Intelligence checks to draft accurate maps and navigate by them. If you also have Survival or History proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Chain Mail",
+    "category": "Heavy Armour",
+    "damage": null,
+    "damageType": null,
+    "weight": "55 lb",
+    "cost": "75 GP",
+    "properties": [
+      "STR 13 required",
+      "Disadvantage on Stealth"
+    ],
+    "description": "Made of interlocking metal rings, chain mail includes a layer of quilted fabric worn underneath the mail to prevent chafing and to cushion the impact of blows. The suit includes gauntlets.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "AC 16"
+  },
+  {
+    "type": "item",
+    "name": "Chain Shirt",
+    "category": "Medium Armour",
+    "damage": null,
+    "damageType": null,
+    "weight": "20 lb",
+    "cost": "50 GP",
+    "properties": [],
+    "description": "Made of interlocking metal rings, a chain shirt is worn between layers of clothing or leather. This armour offers modest protection to the wearer's upper body.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "AC 13 + DEX modifier (max +2)"
+  },
+  {
+    "type": "item",
+    "name": "Climbers Kit",
+    "category": "Adventuring Gear",
+    "damage": null,
+    "damageType": null,
+    "weight": "12 lb",
+    "cost": "25 GP",
+    "properties": [],
+    "description": "A climber's kit includes special pitons, boot tips, gloves, and a harness. As an action, you can use the climber's kit to anchor yourself; when you do, you can't fall more than 25 feet from the point where you anchored yourself, and you can't climb more than 25 feet away from that point.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Club",
+    "category": "Simple Melee Weapon",
+    "damage": "1d4",
+    "damageType": "Bludgeoning",
+    "weight": "2 lb",
+    "cost": "1 SP",
+    "properties": [
+      "Light"
+    ],
+    "description": "A simple wooden club. The most basic of weapons — cheap, easy to find, and reliable in a pinch.",
+    "masteryProperty": "Slow",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you can reduce that creature's Speed by 10 feet until the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Cobbler's Tools",
+    "category": "Artisan's Tools",
+    "cost": "5 GP",
+    "weight": "5 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Cobbler's Tools include a hammer, an awl, a knife, a cobbler's last, spare leather, and thread. Proficiency adds your Proficiency Bonus to Dexterity checks to craft and repair footwear and modify boots for special purposes such as added grip or silent soles. If you also have Stealth or Athletics proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Cook's Utensils",
+    "category": "Artisan's Tools",
+    "cost": "1 GP",
+    "weight": "8 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Cook's Utensils include a metal pot, knives, forks, a stirring spoon, and a ladle. Proficiency adds your Proficiency Bonus to Wisdom checks to prepare nourishing or restorative meals and identify ingredients and their properties. If you also have Medicine or Survival proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Dagger",
+    "category": "Simple Melee Weapon",
+    "damage": "1d4",
+    "damageType": "Piercing",
+    "weight": "1 lb",
+    "cost": "2 GP",
+    "properties": [
+      "Finesse",
+      "Light",
+      "Thrown (range 20/60)"
+    ],
+    "description": "A short blade ideal for close quarters or throwing. Its balance makes it a favourite of rogues and those who fight in tight spaces.",
+    "masteryProperty": "Nick",
+    "masteryText": "When you make the extra attack of the Light property, you can make it as part of the Attack action instead of as a Bonus Action. You can make this extra attack only once per turn."
+  },
+  {
+    "type": "item",
+    "name": "Dart",
+    "category": "Simple Ranged Weapon",
+    "damage": "1d4",
+    "damageType": "Piercing",
+    "weight": "1/4 lb",
+    "cost": "5 CP",
+    "properties": [
+      "Finesse",
+      "Thrown (range 20/60)"
+    ],
+    "description": "A small weighted projectile thrown by hand. Darts are cheap, light, and easy to conceal. Many rogues and assassins keep a handful on their person at all times.",
+    "masteryProperty": "Vex",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you have Advantage on your next attack roll against that creature before the end of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Dice Set",
+    "category": "Gaming Set",
+    "cost": "1 SP",
+    "weight": "—",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A set of small polyhedral dice used for games of chance. Proficiency adds your Proficiency Bonus to Wisdom checks to detect cheating and to employ subtle sleight of hand during games. If you also have Insight or Sleight of Hand proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Disguise Kit",
+    "category": "Kit",
+    "cost": "25 GP",
+    "weight": "3 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A disguise kit contains cosmetics, hair dye, small props, and a small mirror. Proficiency adds your Proficiency Bonus to Charisma checks to create convincing disguises and to see through others' disguises. If you also have Deception or Performance proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Dragonchess Set",
+    "category": "Gaming Set",
+    "cost": "1 GP",
+    "weight": "—",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A three-tiered chess variant played on three boards simultaneously, representing air, land, and underground realms. Proficiency adds your Proficiency Bonus to Intelligence checks to read opponents' strategies and anticipate their moves. If you also have Investigation or Insight proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Drum",
+    "category": "Musical Instrument",
+    "cost": "6 GP",
+    "weight": "3 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A percussion instrument consisting of a hollow cylinder with a membrane stretched across one or both ends. Proficiency lets you use Charisma to perform and inspire others with this instrument. If you also have Performance proficiency, you gain Advantage on checks using this instrument.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Dulcimer",
+    "category": "Musical Instrument",
+    "cost": "25 GP",
+    "weight": "10 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A stringed instrument played by striking the strings with small hammers, producing a bright, resonant tone. Proficiency lets you use Charisma to perform and inspire others with this instrument. If you also have Performance proficiency, you gain Advantage on checks using this instrument.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Flail",
+    "category": "Martial Melee Weapon",
+    "damage": "1d8",
+    "damageType": "Bludgeoning",
+    "weight": "2 lb",
+    "cost": "10 GP",
+    "properties": [],
+    "description": "A weighted ball on a chain attached to a handle. The flexible head can wrap around shields, making it effective against heavily armoured opponents.",
+    "masteryProperty": "Sap",
+    "masteryText": "If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Flute",
+    "category": "Musical Instrument",
+    "cost": "2 GP",
+    "weight": "1 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A simple wind instrument played by blowing across a hole near one end, capable of bright, clear tones. Proficiency lets you use Charisma to perform and inspire others with this instrument. If you also have Performance proficiency, you gain Advantage on checks using this instrument.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Forgery Kit",
+    "category": "Kit",
+    "cost": "15 GP",
+    "weight": "5 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A forgery kit includes several types of ink, a variety of parchments and papers, quills, wax seals, and binding materials. Proficiency adds your Proficiency Bonus to Dexterity checks to create convincing forgeries of documents and seals and to detect forgeries. If you also have Deception or History proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Glaive",
+    "category": "Martial Melee Weapon",
+    "damage": "1d10",
+    "damageType": "Slashing",
+    "weight": "6 lb",
+    "cost": "20 GP",
+    "properties": [
+      "Heavy",
+      "Reach",
+      "Two-Handed"
+    ],
+    "description": "A long polearm with a single-edged blade. Its reach makes it devastating against enemies who can't close the distance, and its sweeping cuts can hit multiple foes.",
+    "masteryProperty": "Graze",
+    "masteryText": "If your attack roll misses a creature, you can deal damage equal to your ability modifier to that creature. This damage is the same type dealt by the weapon."
+  },
+  {
+    "type": "item",
+    "name": "Glassblower's Tools",
+    "category": "Artisan's Tools",
+    "cost": "30 GP",
+    "weight": "5 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Glassblower's Tools include a blowpipe, a marver, blocks, and tweezers. Proficiency adds your Proficiency Bonus to Intelligence checks to craft glass objects and assess the quality or flaws of glass and crystal items. If you also have History or Investigation proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Greataxe",
+    "category": "Martial Melee Weapon",
+    "damage": "1d12",
+    "damageType": "Slashing",
+    "weight": "7 lb",
+    "cost": "30 GP",
+    "properties": [
+      "Heavy",
+      "Two-Handed"
+    ],
+    "description": "A massive double-headed axe that deals devastating damage in the hands of a powerful warrior. The weapon of choice for barbarians who favour raw power over finesse.",
+    "masteryProperty": "Cleave",
+    "masteryText": "If you hit a creature with a melee attack, you can make a melee attack against a second creature within 5 feet of the first that is also within your reach. On a hit, the second attack deals damage but you don't add your ability modifier unless it is negative."
+  },
+  {
+    "type": "item",
+    "name": "Greatclub",
+    "category": "Simple Melee Weapon",
+    "damage": "1d8",
+    "damageType": "Bludgeoning",
+    "weight": "10 lb",
+    "cost": "2 SP",
+    "properties": [
+      "Two-Handed"
+    ],
+    "description": "A large, heavy bludgeon. Simple in construction but devastating in the hands of someone strong enough to wield it properly.",
+    "masteryProperty": "Push",
+    "masteryText": "If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller."
+  },
+  {
+    "type": "item",
+    "name": "Greatsword",
+    "category": "Martial Melee Weapon",
+    "damage": "2d6",
+    "damageType": "Slashing",
+    "weight": "6 lb",
+    "cost": "50 GP",
+    "properties": [
+      "Heavy",
+      "Two-Handed"
+    ],
+    "description": "A massive two-handed sword requiring considerable strength and training to wield effectively. Favoured by fighters and paladins who want maximum damage output.",
+    "masteryProperty": "Graze",
+    "masteryText": "If your attack roll misses a creature, you can deal damage equal to your ability modifier to that creature. This damage is the same type dealt by the weapon."
+  },
+  {
+    "type": "item",
+    "name": "Halberd",
+    "category": "Martial Melee Weapon",
+    "damage": "1d10",
+    "damageType": "Slashing",
+    "weight": "6 lb",
+    "cost": "20 GP",
+    "properties": [
+      "Heavy",
+      "Reach",
+      "Two-Handed"
+    ],
+    "description": "A polearm combining an axe blade with a spear point. Used by guards and soldiers, the halberd can hook mounted riders from their saddles as well as keep infantry at bay.",
+    "masteryProperty": "Cleave",
+    "masteryText": "If you hit a creature with a melee attack, you can make a melee attack against a second creature within 5 feet of the first that is also within your reach. On a hit, the second attack deals damage but you don't add your ability modifier unless it is negative."
+  },
+  {
+    "type": "item",
+    "name": "Half Plate",
+    "category": "Medium Armour",
+    "damage": null,
+    "damageType": null,
+    "weight": "40 lb",
+    "cost": "750 GP",
+    "properties": [
+      "Disadvantage on Stealth"
+    ],
+    "description": "Half plate consists of shaped metal plates that cover most of the wearer's body. It does not include leg protection beyond simple greaves attached with leather straps.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "AC 15 + DEX modifier (max +2)"
+  },
+  {
+    "type": "item",
+    "name": "Hand Crossbow",
+    "category": "Martial Ranged Weapon",
+    "damage": "1d6",
+    "damageType": "Piercing",
+    "weight": "3 lb",
+    "cost": "75 GP",
+    "properties": [
+      "Ammunition (range 30/120)",
+      "Light",
+      "Loading"
+    ],
+    "description": "A compact one-handed crossbow that can be used alongside a melee weapon. Expensive and awkward to reload, but invaluable for rogues who need a ranged option in hand.",
+    "masteryProperty": "Vex",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you have Advantage on your next attack roll against that creature before the end of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Handaxe",
+    "category": "Simple Melee Weapon",
+    "damage": "1d6",
+    "damageType": "Slashing",
+    "weight": "2 lb",
+    "cost": "5 GP",
+    "properties": [
+      "Light",
+      "Thrown (range 20/60)"
+    ],
+    "description": "A small, single-headed axe balanced for throwing or use in melee. Versatile enough for utility work around camp as well as combat.",
+    "masteryProperty": "Vex",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you have Advantage on your next attack roll against that creature before the end of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Healer's Kit",
+    "category": "Kit",
+    "cost": "5 GP",
+    "weight": "3 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A healer's kit contains bandages, salves, and splints (10 uses). As a Utilize action, expend one use to stabilise a creature at 0 Hit Points without a Wisdom (Medicine) check. Proficiency adds your Proficiency Bonus to Wisdom (Medicine) checks. If you also have Medicine proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Healers Kit",
+    "category": "Adventuring Gear",
+    "damage": null,
+    "damageType": null,
+    "weight": "3 lb",
+    "cost": "5 GP",
+    "properties": [
+      "10 uses"
+    ],
+    "description": "A leather pouch containing bandages, salves, and splints. As an action, you can expend one use to stabilise a creature that has 0 Hit Points, without needing to make a Wisdom (Medicine) check.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Heavy Crossbow",
+    "category": "Martial Ranged Weapon",
+    "damage": "1d10",
+    "damageType": "Piercing",
+    "weight": "18 lb",
+    "cost": "50 GP",
+    "properties": [
+      "Ammunition (range 100/400)",
+      "Heavy",
+      "Loading",
+      "Two-Handed"
+    ],
+    "description": "A powerful crossbow that delivers tremendous force, capable of punching through heavy armour at range. Its slow reload speed is offset by devastating damage on a hit.",
+    "masteryProperty": "Push",
+    "masteryText": "If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller."
+  },
+  {
+    "type": "item",
+    "name": "Herbalism Kit",
+    "category": "Tools",
+    "damage": null,
+    "damageType": null,
+    "weight": "3 lb",
+    "cost": "5 GP",
+    "properties": [],
+    "description": "This kit contains clippers, a mortar and pestle, and pouches and vials for storing herbs. Proficiency adds your Proficiency Bonus to Intelligence checks to identify herbs and craft antitoxin and healing potions. If you also have Nature or Medicine proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Hide Armour",
+    "category": "Medium Armour",
+    "damage": null,
+    "damageType": null,
+    "weight": "12 lb",
+    "cost": "10 GP",
+    "properties": [],
+    "description": "This crude armour consists of thick furs and pelts. It is commonly worn by Barbarian tribes and other folk who lack access to the tools and materials needed to create better armour.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "AC 12 + DEX modifier (max +2)"
+  },
+  {
+    "type": "item",
+    "name": "Horn",
+    "category": "Musical Instrument",
+    "cost": "3 GP",
+    "weight": "2 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A wind instrument made from an animal horn or shaped metal, often used for signalling as well as music. Proficiency lets you use Charisma to perform and inspire others with this instrument. If you also have Performance proficiency, you gain Advantage on checks using this instrument.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Javelin",
+    "category": "Simple Melee Weapon",
+    "damage": "1d6",
+    "damageType": "Piercing",
+    "weight": "2 lb",
+    "cost": "5 SP",
+    "properties": [
+      "Thrown (range 30/120)"
+    ],
+    "description": "A light spear designed primarily for throwing. Soldiers have used javelins for centuries to soften up enemies before closing to melee.",
+    "masteryProperty": "Slow",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you can reduce that creature's Speed by 10 feet until the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Jeweler's Tools",
+    "category": "Artisan's Tools",
+    "cost": "25 GP",
+    "weight": "2 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Jeweler's Tools include a small saw, a hammer, files, a magnifying glass, tweezers, and a small cup of acid. Proficiency adds your Proficiency Bonus to Intelligence checks to craft and appraise jewellery and gems and identify precious stones. If you also have Investigation or Arcana proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Lance",
+    "category": "Martial Melee Weapon",
+    "damage": "1d10",
+    "damageType": "Piercing",
+    "weight": "6 lb",
+    "cost": "10 GP",
+    "properties": [
+      "Heavy",
+      "Reach"
+    ],
+    "description": "A long cavalry weapon designed to deliver devastating charges on horseback. Unwieldy on foot but lethal when used by a mounted warrior at full gallop.",
+    "masteryProperty": "Topple",
+    "masteryText": "If you hit a creature with this weapon, you can force the creature to make a Constitution saving throw (DC 8 + proficiency bonus + attack ability modifier). On a failed save, the creature has the Prone condition."
+  },
+  {
+    "type": "item",
+    "name": "Lantern, Hooded",
+    "category": "Adventuring Gear",
+    "damage": null,
+    "damageType": null,
+    "weight": "2 lb",
+    "cost": "5 GP",
+    "properties": [],
+    "description": "Burns for 6 hours on a flask of oil, shedding Bright Light in a 30-foot radius and Dim Light for an additional 30 feet. As an action, you can lower the hood, reducing the light to Dim Light in a 5-foot radius.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Leather Armour",
+    "category": "Light Armour",
+    "damage": null,
+    "damageType": null,
+    "weight": "10 lb",
+    "cost": "10 GP",
+    "properties": [],
+    "description": "The breastplate and shoulder protectors of this armour are made of leather that has been stiffened by being boiled in oil. The rest of the armour is made of softer and more flexible materials.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "AC 11 + DEX modifier"
+  },
+  {
+    "type": "item",
+    "name": "Leatherworker's Tools",
+    "category": "Artisan's Tools",
+    "cost": "5 GP",
+    "weight": "5 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Leatherworker's Tools include a knife, a small mallet, an edger, a hole punch, thread, and leather scraps. Proficiency adds your Proficiency Bonus to Dexterity checks to craft and repair leather armour and goods and identify leather items and their origin. If you also have Investigation or Stealth proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Light Crossbow",
+    "category": "Simple Ranged Weapon",
+    "damage": "1d8",
+    "damageType": "Piercing",
+    "weight": "5 lb",
+    "cost": "25 GP",
+    "properties": [
+      "Ammunition (range 80/320)",
+      "Loading",
+      "Two-Handed"
+    ],
+    "description": "A mechanically-cocked ranged weapon easier to use than a longbow, though slower to reload. Popular among guards and militia for its reliability.",
+    "masteryProperty": "Slow",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you can reduce that creature's Speed by 10 feet until the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Light Hammer",
+    "category": "Simple Melee Weapon",
+    "damage": "1d4",
+    "damageType": "Bludgeoning",
+    "weight": "2 lb",
+    "cost": "2 GP",
+    "properties": [
+      "Light",
+      "Thrown (range 20/60)"
+    ],
+    "description": "A small hammer equally suited to driving nails and cracking skulls. Its light weight lets you use it one-handed or hurl it at enemies.",
+    "masteryProperty": "Nick",
+    "masteryText": "When you make the extra attack of the Light property, you can make it as part of the Attack action instead of as a Bonus Action. You can make this extra attack only once per turn."
+  },
+  {
+    "type": "item",
+    "name": "Longbow",
+    "category": "Martial Ranged Weapon",
+    "damage": "1d8",
+    "damageType": "Piercing",
+    "weight": "2 lb",
+    "cost": "50 GP",
+    "properties": [
+      "Ammunition (range 150/600)",
+      "Heavy",
+      "Two-Handed"
+    ],
+    "description": "The preeminent military ranged weapon. A skilled longbowman can loose arrows with deadly accuracy at extreme range. English longbowmen decided battles from hundreds of yards away.",
+    "masteryProperty": "Slow",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you can reduce that creature's Speed by 10 feet until the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Longsword",
+    "category": "Martial Melee Weapon",
+    "damage": "1d8",
+    "damageType": "Slashing",
+    "weight": "3 lb",
+    "cost": "15 GP",
+    "properties": [
+      "Versatile (1d10)"
+    ],
+    "description": "The quintessential knightly weapon. Balanced for one or two hands, the longsword is as much a symbol of martial prowess as it is a tool of war.",
+    "masteryProperty": "Sap",
+    "masteryText": "If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Lute",
+    "category": "Musical Instrument",
+    "cost": "35 GP",
+    "weight": "2 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A plucked stringed instrument with a pear-shaped body, the standard instrument of bards across the realms. Proficiency lets you use Charisma to perform and inspire others with this instrument. If you also have Performance proficiency, you gain Advantage on checks using this instrument.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Lyre",
+    "category": "Musical Instrument",
+    "cost": "30 GP",
+    "weight": "2 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A plucked string instrument with a U-shaped frame, associated with ancient tradition and bardic magic. Proficiency lets you use Charisma to perform and inspire others with this instrument. If you also have Performance proficiency, you gain Advantage on checks using this instrument.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Mace",
+    "category": "Simple Melee Weapon",
+    "damage": "1d6",
+    "damageType": "Bludgeoning",
+    "weight": "4 lb",
+    "cost": "5 GP",
+    "properties": [],
+    "description": "A weighted metal head atop a sturdy haft. The weapon of choice for those whose faith compels them to avoid shedding blood, since it crushes rather than cuts.",
+    "masteryProperty": "Sap",
+    "masteryText": "If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Mason's Tools",
+    "category": "Artisan's Tools",
+    "cost": "10 GP",
+    "weight": "8 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Mason's Tools include a trowel, a hammer, a chisel, brushes, and a square. Proficiency adds your Proficiency Bonus to Strength checks to construct stone structures, assess the stability of stonework, and find weaknesses in walls. If you also have Perception or Investigation proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Maul",
+    "category": "Martial Melee Weapon",
+    "damage": "2d6",
+    "damageType": "Bludgeoning",
+    "weight": "10 lb",
+    "cost": "10 GP",
+    "properties": [
+      "Heavy",
+      "Two-Handed"
+    ],
+    "description": "A massive war hammer requiring two hands to swing. Favoured by those who want to crush armour and bone alike. What it lacks in elegance it more than makes up for in raw destructive power.",
+    "masteryProperty": "Topple",
+    "masteryText": "If you hit a creature with this weapon, you can force the creature to make a Constitution saving throw (DC 8 + proficiency bonus + attack ability modifier). On a failed save, the creature has the Prone condition."
+  },
+  {
+    "type": "item",
+    "name": "Morningstar",
+    "category": "Martial Melee Weapon",
+    "damage": "1d8",
+    "damageType": "Piercing",
+    "weight": "4 lb",
+    "cost": "15 GP",
+    "properties": [],
+    "description": "A spiked metal ball atop a handle. The spikes allow it to punch through armour that would blunt a smooth-headed mace, combining the reach of a club with armour-piercing capability.",
+    "masteryProperty": "Sap",
+    "masteryText": "If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Navigator's Tools",
+    "category": "Tools",
+    "cost": "25 GP",
+    "weight": "2 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Navigator's Tools include a sextant, a compass, calipers, a ruler, parchment, ink, and a quill. Proficiency adds your Proficiency Bonus to Wisdom checks to chart courses, navigate by stars, and determine your position at sea or in the wilderness. If you also have Survival or History proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Net",
+    "category": "Martial Ranged Weapon",
+    "damage": "—",
+    "damageType": "—",
+    "weight": "3 lb",
+    "cost": "1 GP",
+    "properties": [
+      "Thrown (range 5/15)"
+    ],
+    "description": "A large mesh thrown to entangle opponents. A Large or smaller creature hit by the net has the Restrained condition until it frees itself. Freeing requires a DC 10 Strength check as an action, or the net can be cut (AC 10, 5 HP).",
+    "masteryProperty": "Slow",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you can reduce that creature's Speed by 10 feet until the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Padded Armour",
+    "category": "Light Armour",
+    "damage": null,
+    "damageType": null,
+    "weight": "8 lb",
+    "cost": "5 GP",
+    "properties": [
+      "Disadvantage on Stealth"
+    ],
+    "description": "Quilted layers of cloth and batting. Cheap and easy to come by but bulky enough to hinder sneaky movement.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "AC 11 + DEX modifier"
+  },
+  {
+    "type": "item",
+    "name": "Painter's Supplies",
+    "category": "Artisan's Tools",
+    "cost": "10 GP",
+    "weight": "5 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Painter's Supplies include an easel, canvas, paints, brushes, charcoal sticks, and a palette. Proficiency adds your Proficiency Bonus to Wisdom checks to create or authenticate artwork and recall details about artistic styles and their origins. If you also have Insight or Perception proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Pan Flute",
+    "category": "Musical Instrument",
+    "cost": "12 GP",
+    "weight": "2 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A wind instrument made of a series of tubes of increasing length bound together, producing an airy, haunting tone. Proficiency lets you use Charisma to perform and inspire others with this instrument. If you also have Performance proficiency, you gain Advantage on checks using this instrument.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Pike",
+    "category": "Martial Melee Weapon",
+    "damage": "1d10",
+    "damageType": "Piercing",
+    "weight": "18 lb",
+    "cost": "5 GP",
+    "properties": [
+      "Heavy",
+      "Reach",
+      "Two-Handed"
+    ],
+    "description": "An extremely long spear used by infantry formations to hold cavalry at bay. When pikemen stand in formation, their overlapping reach creates an almost impenetrable wall of points.",
+    "masteryProperty": "Push",
+    "masteryText": "If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller."
+  },
+  {
+    "type": "item",
+    "name": "Plate Armour",
+    "category": "Heavy Armour",
+    "damage": null,
+    "damageType": null,
+    "weight": "65 lb",
+    "cost": "1,500 GP",
+    "properties": [
+      "STR 15 required",
+      "Disadvantage on Stealth"
+    ],
+    "description": "Plate consists of shaped, interlocking metal plates to cover the entire body. A suit of plate includes gauntlets, heavy leather boots, a visored helmet, and thick layers of padding underneath the armour. Buckles and straps distribute the weight over the body.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "AC 18"
+  },
+  {
+    "type": "item",
+    "name": "Playing Card Set",
+    "category": "Gaming Set",
+    "cost": "5 SP",
+    "weight": "—",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A deck of illustrated cards used for a variety of games. Proficiency adds your Proficiency Bonus to Wisdom checks to detect cheating and employ card tricks. If you also have Insight or Sleight of Hand proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Poisoner's Kit",
+    "category": "Kit",
+    "cost": "50 GP",
+    "weight": "2 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A poisoner's kit includes vials, chemicals, and tools for creating and handling poisons. Proficiency adds your Proficiency Bonus to Intelligence checks to craft and identify poisons and lets you apply poison to a weapon without risking poisoning yourself. If you also have Nature or Medicine proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Potion of Climbing",
+    "category": "Potion",
+    "damage": null,
+    "damageType": null,
+    "weight": "0.5 lb",
+    "cost": "75 GP",
+    "properties": [],
+    "description": "When you drink this potion, you gain a Climb Speed equal to your Speed for 1 hour. During this time, you have Advantage on Strength (Athletics) checks made to climb.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Potion of Greater Healing",
+    "category": "Potion",
+    "damage": null,
+    "damageType": null,
+    "weight": "0.5 lb",
+    "cost": "100 GP",
+    "properties": [],
+    "description": "You regain 4d4 + 4 Hit Points when you drink this potion. Drinking or administering a potion takes a Bonus Action.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Potion of Healing",
+    "category": "Potion",
+    "damage": null,
+    "damageType": null,
+    "weight": "0.5 lb",
+    "cost": "50 GP",
+    "properties": [],
+    "description": "You regain 2d4 + 2 Hit Points when you drink this potion. Drinking or administering a potion takes a Bonus Action.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Potion of Invisibility",
+    "category": "Potion",
+    "damage": null,
+    "damageType": null,
+    "weight": "0.5 lb",
+    "cost": "180 GP",
+    "properties": [],
+    "description": "This potion's container looks empty but feels as though it holds liquid. When you drink it, you have the Invisible condition for 1 hour. The effect ends early if you attack or cast a spell.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Potion of Speed",
+    "category": "Potion",
+    "damage": null,
+    "damageType": null,
+    "weight": "0.5 lb",
+    "cost": "400 GP",
+    "properties": [],
+    "description": "When you drink this potion, you gain the effect of the Haste spell for 1 minute (no Concentration required).",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Potion of Superior Healing",
+    "category": "Potion",
+    "damage": null,
+    "damageType": null,
+    "weight": "0.5 lb",
+    "cost": "500 GP",
+    "properties": [],
+    "description": "You regain 8d4 + 8 Hit Points when you drink this potion. Drinking or administering a potion takes a Bonus Action.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Potion of Supreme Healing",
+    "category": "Potion",
+    "damage": null,
+    "damageType": null,
+    "weight": "0.5 lb",
+    "cost": "5,000 GP",
+    "properties": [],
+    "description": "You regain 10d4 + 20 Hit Points when you drink this potion. Drinking or administering a potion takes a Bonus Action.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Potter's Tools",
+    "category": "Artisan's Tools",
+    "cost": "10 GP",
+    "weight": "3 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Potter's Tools include potter's needles, ribs, scrapers, a knife, and calipers. Proficiency adds your Proficiency Bonus to Intelligence checks to craft ceramic objects and vessels and identify pottery and its origins. If you also have History or Investigation proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Quarterstaff",
+    "category": "Simple Melee Weapon",
+    "damage": "1d6",
+    "damageType": "Bludgeoning",
+    "weight": "4 lb",
+    "cost": "2 SP",
+    "properties": [
+      "Versatile (1d8)"
+    ],
+    "description": "A sturdy wooden staff used by travellers and warriors alike. When wielded with two hands, it deals greater damage. Many spellcasters favour it as an arcane focus.",
+    "masteryProperty": "Topple",
+    "masteryText": "If you hit a creature with this weapon, you can force the creature to make a Constitution saving throw (DC 8 + proficiency bonus + attack ability modifier). On a failed save, the creature has the Prone condition."
+  },
+  {
+    "type": "item",
+    "name": "Rapier",
+    "category": "Martial Melee Weapon",
+    "damage": "1d8",
+    "damageType": "Piercing",
+    "weight": "2 lb",
+    "cost": "25 GP",
+    "properties": [
+      "Finesse"
+    ],
+    "description": "A slender thrusting blade favoured by duelists and nobles. The rapier rewards precision over brute force, allowing those with quick reflexes to outfight heavier-armed opponents.",
+    "masteryProperty": "Vex",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you have Advantage on your next attack roll against that creature before the end of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Rations",
+    "category": "Adventuring Gear",
+    "damage": null,
+    "damageType": null,
+    "weight": "2 lb",
+    "cost": "5 SP",
+    "properties": [
+      "1 day"
+    ],
+    "description": "Rations consist of dry foods suitable for extended travel, including jerky, dried fruit, hardtack, and nuts. Each pack provides one day's worth of nourishment for one person.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Ring Mail",
+    "category": "Heavy Armour",
+    "damage": null,
+    "damageType": null,
+    "weight": "40 lb",
+    "cost": "30 GP",
+    "properties": [
+      "Disadvantage on Stealth"
+    ],
+    "description": "This armour is leather armour with heavy rings sewn into it. The rings help reinforce the armour against blows from swords and axes. Ring mail is inferior to chain mail, and it's usually worn only by those who can't afford better armour.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "AC 14"
+  },
+  {
+    "type": "item",
+    "name": "Rope, Hempen",
+    "category": "Adventuring Gear",
+    "damage": null,
+    "damageType": null,
+    "weight": "10 lb",
+    "cost": "1 GP",
+    "properties": [
+      "50 feet"
+    ],
+    "description": "Has 2 Hit Points and can be burst with a DC 17 Strength check. Rope is essential for climbing, securing prisoners, binding cargo, and dozens of other adventuring tasks.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Rope, Silk",
+    "category": "Adventuring Gear",
+    "damage": null,
+    "damageType": null,
+    "weight": "5 lb",
+    "cost": "10 GP",
+    "properties": [
+      "50 feet"
+    ],
+    "description": "Has 2 Hit Points and can be burst with a DC 17 Strength check. Stronger and lighter than hempen rope. Favoured by rogues and climbers who need reliability at height.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Scale Mail",
+    "category": "Medium Armour",
+    "damage": null,
+    "damageType": null,
+    "weight": "45 lb",
+    "cost": "50 GP",
+    "properties": [
+      "Disadvantage on Stealth"
+    ],
+    "description": "This armour consists of a coat and leggings (and perhaps a separate skirt) of leather covered with overlapping pieces of metal, much like the scales of a fish.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "AC 14 + DEX modifier (max +2)"
+  },
+  {
+    "type": "item",
+    "name": "Scimitar",
+    "category": "Martial Melee Weapon",
+    "damage": "1d6",
+    "damageType": "Slashing",
+    "weight": "3 lb",
+    "cost": "25 GP",
+    "properties": [
+      "Finesse",
+      "Light"
+    ],
+    "description": "A curved single-edged blade designed for slashing attacks from horseback. Its curved design allows it to draw through the target, maximising the cut.",
+    "masteryProperty": "Nick",
+    "masteryText": "When you make the extra attack of the Light property, you can make it as part of the Attack action instead of as a Bonus Action. You can make this extra attack only once per turn."
+  },
+  {
+    "type": "item",
+    "name": "Shawm",
+    "category": "Musical Instrument",
+    "cost": "2 GP",
+    "weight": "1 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A loud double-reed woodwind instrument, predecessor to the oboe, common at festivals and outdoor events. Proficiency lets you use Charisma to perform and inspire others with this instrument. If you also have Performance proficiency, you gain Advantage on checks using this instrument.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Shield",
+    "category": "Shield",
+    "damage": null,
+    "damageType": null,
+    "weight": "6 lb",
+    "cost": "10 GP",
+    "properties": [],
+    "description": "While wielding this shield, you are proficient with it. A shield can't be used in combination with a two-handed weapon.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "+2 to AC"
+  },
+  {
+    "type": "item",
+    "name": "Shortbow",
+    "category": "Simple Ranged Weapon",
+    "damage": "1d6",
+    "damageType": "Piercing",
+    "weight": "2 lb",
+    "cost": "25 GP",
+    "properties": [
+      "Ammunition (range 80/320)",
+      "Two-Handed"
+    ],
+    "description": "A smaller bow usable on horseback or in confined spaces where a longbow would be unwieldy. Rangers and scouts favour the shortbow for its versatility.",
+    "masteryProperty": "Vex",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you have Advantage on your next attack roll against that creature before the end of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Shortsword",
+    "category": "Martial Melee Weapon",
+    "damage": "1d6",
+    "damageType": "Piercing",
+    "weight": "2 lb",
+    "cost": "10 GP",
+    "properties": [
+      "Finesse",
+      "Light"
+    ],
+    "description": "A compact double-edged blade ideal for close quarters. Rogues and monks favour the shortsword for its combination of finesse and light weight, allowing dual-wielding with ease.",
+    "masteryProperty": "Vex",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you have Advantage on your next attack roll against that creature before the end of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Sickle",
+    "category": "Simple Melee Weapon",
+    "damage": "1d4",
+    "damageType": "Slashing",
+    "weight": "2 lb",
+    "cost": "1 GP",
+    "properties": [
+      "Light"
+    ],
+    "description": "A curved blade originally designed for harvesting grain. Its hook-like shape makes it surprisingly effective at catching opponents off guard.",
+    "masteryProperty": "Nick",
+    "masteryText": "When you make the extra attack of the Light property, you can make it as part of the Attack action instead of as a Bonus Action. You can make this extra attack only once per turn."
+  },
+  {
+    "type": "item",
+    "name": "Sling",
+    "category": "Simple Ranged Weapon",
+    "damage": "1d4",
+    "damageType": "Bludgeoning",
+    "weight": "0 lb",
+    "cost": "1 SP",
+    "properties": [
+      "Ammunition (range 30/120)"
+    ],
+    "description": "A simple strip of leather used to hurl stones at high speed. Cheap, easy to make, and devastatingly effective in practiced hands.",
+    "masteryProperty": "Slow",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you can reduce that creature's Speed by 10 feet until the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Smith's Tools",
+    "category": "Artisan's Tools",
+    "cost": "20 GP",
+    "weight": "8 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Smith's Tools include hammers, tongs, a punch, a chisel, and a whetstone. Proficiency adds your Proficiency Bonus to Strength checks to craft and repair metal weapons, armour, and equipment, and to assess the quality of metalwork. If you also have Arcana or Athletics proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Spear",
+    "category": "Simple Melee Weapon",
+    "damage": "1d6",
+    "damageType": "Piercing",
+    "weight": "3 lb",
+    "cost": "1 GP",
+    "properties": [
+      "Thrown (range 20/60)",
+      "Versatile (1d8)"
+    ],
+    "description": "One of the oldest weapons in existence — a sharpened point on a long shaft. Simple to make and deadly in disciplined hands.",
+    "masteryProperty": "Sap",
+    "masteryText": "If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Splint Armour",
+    "category": "Heavy Armour",
+    "damage": null,
+    "damageType": null,
+    "weight": "60 lb",
+    "cost": "200 GP",
+    "properties": [
+      "STR 15 required",
+      "Disadvantage on Stealth"
+    ],
+    "description": "This armour is made of narrow vertical strips of metal riveted to a backing of leather that is worn over cloth padding. Flexible chain mail protects the joints.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "AC 17"
+  },
+  {
+    "type": "item",
+    "name": "Studded Leather",
+    "category": "Light Armour",
+    "damage": null,
+    "damageType": null,
+    "weight": "13 lb",
+    "cost": "45 GP",
+    "properties": [],
+    "description": "Made from tough but flexible leather, studded leather is reinforced with close-set rivets or spikes.",
+    "masteryProperty": null,
+    "masteryText": null,
+    "ac": "AC 12 + DEX modifier"
+  },
+  {
+    "type": "item",
+    "name": "Thieves' Tools",
+    "category": "Tools",
+    "cost": "25 GP",
+    "weight": "1 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Thieves' Tools include a small file, a set of lock picks, a small mirror on a metal handle, a set of narrow-bladed scissors, and a pair of pliers. Proficiency lets you add your Proficiency Bonus to Dexterity checks to pick locks and disarm mechanical traps. If you also have Sleight of Hand proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Three-Dragon Ante Set",
+    "category": "Gaming Set",
+    "cost": "1 GP",
+    "weight": "—",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A popular tavern card game played throughout the Forgotten Realms; each card depicts one of the dragon types. Proficiency adds your Proficiency Bonus to Wisdom checks to read opponents and bluff convincingly. If you also have Insight or Deception proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Tinderbox",
+    "category": "Adventuring Gear",
+    "damage": null,
+    "damageType": null,
+    "weight": "1 lb",
+    "cost": "5 SP",
+    "properties": [],
+    "description": "This small container holds flint, fire steel, and tinder used to kindle a fire. Using it to light a torch — or anything else with abundant, exposed fuel — takes a Bonus Action. Lighting any other fire takes 1 minute.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Tinker's Tools",
+    "category": "Artisan's Tools",
+    "cost": "50 GP",
+    "weight": "10 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Tinker's Tools include a variety of hand tools, thread, needles, a whetstone, scraps of cloth and leather, and a small pot of glue. Proficiency adds your Proficiency Bonus to Dexterity checks to craft and repair small mechanisms and devices and to construct or dismantle traps. If you also have Investigation or Stealth proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Torch",
+    "category": "Adventuring Gear",
+    "damage": null,
+    "damageType": null,
+    "weight": "1 lb",
+    "cost": "1 CP",
+    "properties": [],
+    "description": "Burns for 1 hour, shedding Bright Light in a 20-foot radius and Dim Light for an additional 20 feet. If you make a melee attack with a burning torch and hit, it deals 1 Fire damage.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Trident",
+    "category": "Martial Melee Weapon",
+    "damage": "1d8",
+    "damageType": "Piercing",
+    "weight": "4 lb",
+    "cost": "5 GP",
+    "properties": [
+      "Thrown (range 20/60)",
+      "Versatile (1d10)"
+    ],
+    "description": "A three-pronged spear associated with sea gods and gladiatorial combat. The multiple points make it effective at catching and controlling an opponent's weapon or shield.",
+    "masteryProperty": "Topple",
+    "masteryText": "If you hit a creature with this weapon, you can force the creature to make a Constitution saving throw (DC 8 + proficiency bonus + attack ability modifier). On a failed save, the creature has the Prone condition."
+  },
+  {
+    "type": "item",
+    "name": "Viol",
+    "category": "Musical Instrument",
+    "cost": "30 GP",
+    "weight": "1 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "A bowed stringed instrument held between the knees, prized for its rich, resonant tone. Proficiency lets you use Charisma to perform and inspire others with this instrument. If you also have Performance proficiency, you gain Advantage on checks using this instrument.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "War Pick",
+    "category": "Martial Melee Weapon",
+    "damage": "1d8",
+    "damageType": "Piercing",
+    "weight": "2 lb",
+    "cost": "5 GP",
+    "properties": [],
+    "description": "A pick-shaped weapon designed to punch through plate armour. The narrow point concentrates all the force of the blow into a tiny area, defeating even heavy armour.",
+    "masteryProperty": "Sap",
+    "masteryText": "If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Warhammer",
+    "category": "Martial Melee Weapon",
+    "damage": "1d8",
+    "damageType": "Bludgeoning",
+    "weight": "5 lb",
+    "cost": "15 GP",
+    "properties": [
+      "Versatile (1d10)"
+    ],
+    "description": "A single-headed hammer used by warriors and clerics alike. Its weight delivers crushing blows that can dent armour and break bones even when it doesn't punch through.",
+    "masteryProperty": "Push",
+    "masteryText": "If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller."
+  },
+  {
+    "type": "item",
+    "name": "Waterskin",
+    "category": "Adventuring Gear",
+    "damage": null,
+    "damageType": null,
+    "weight": "5 lb (full)",
+    "cost": "2 SP",
+    "properties": [],
+    "description": "Holds 4 pints of liquid. A character needs about 1 gallon (8 pints) of water per day, or twice as much in hot weather.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Weaver's Tools",
+    "category": "Artisan's Tools",
+    "cost": "1 GP",
+    "weight": "5 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Weaver's Tools include thread, needles, and scraps of cloth. Proficiency adds your Proficiency Bonus to Dexterity checks to craft cloth and clothing, repair garments, and identify fabric quality and origin. If you also have Insight or Stealth proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  },
+  {
+    "type": "item",
+    "name": "Whip",
+    "category": "Martial Melee Weapon",
+    "damage": "1d4",
+    "damageType": "Slashing",
+    "weight": "3 lb",
+    "cost": "2 GP",
+    "properties": [
+      "Finesse",
+      "Reach"
+    ],
+    "description": "A long leather lash that can strike at range and entangle limbs. In skilled hands the whip can disarm opponents or trip them before they can close to melee range.",
+    "masteryProperty": "Slow",
+    "masteryText": "If you hit a creature with this weapon and deal damage, you can reduce that creature's Speed by 10 feet until the start of your next turn."
+  },
+  {
+    "type": "item",
+    "name": "Woodcarver's Tools",
+    "category": "Artisan's Tools",
+    "cost": "1 GP",
+    "weight": "5 lb",
+    "damage": null,
+    "damageType": null,
+    "properties": [],
+    "description": "Woodcarver's Tools include a knife, a gouge, and a small saw. Proficiency adds your Proficiency Bonus to Dexterity checks to craft wooden objects and decorative carvings and identify wood types and their properties. If you also have Nature or Perception proficiency, you gain Advantage on checks using these tools.",
+    "masteryProperty": null,
+    "masteryText": null
+  }
+]
