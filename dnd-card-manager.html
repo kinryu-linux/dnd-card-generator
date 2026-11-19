@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>D&D 2024 Card Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=IM+Fell+English:ital@0;1&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+/* ================================================================
+   TOKENS
+   ================================================================ */
+:root {
+  --spell-hdr:       #1a5f7a;
+  --spell-hdr-text:  #fff;
+  --spell-badge-bg:  #0d3d52;
+  --spell-badge:     #a8d8ea;
+  --spell-accent:    #1a5f7a;
+  --spell-foot:      #1a5f7a;
+  --spell-foot-text: #fff;
+
+  --item-hdr:        #3d6b35;
+  --item-hdr-text:   #fff;
+  --item-badge-bg:   #254420;
+  --item-badge:      #b8d9b0;
+  --item-accent:     #3d6b35;
+  --item-damage-bg:  #b22222;
+  --item-damage-txt: #fff;
+  --item-foot:       #3d6b35;
+  --item-foot-text:  #fff;
+  --mastery-color:   #7a1f00;
+
+  --card-bg:    #f8f5ec;
+  --card-rule:  #d4c89a;
+  --body-text:  #1c1c1c;
+  --sub-text:   #555;
+  --paper-line: repeating-linear-gradient(
+                  transparent 0px, transparent 11px,
+                  rgba(0,0,0,.04) 11px, rgba(0,0,0,.04) 12px);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: #1a1a1a;
+  color: #e0e0e0;
+  min-height: 100vh;
+}
+
+/* ================================================================
+   TOP BAR
+   ================================================================ */
+#topbar {
+  background: #2a2a2a;
+  border-bottom: 1px solid #444;
+  padding: 10px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+#topbar h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  color: #a8d8ea;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.btn {
+  background: #3a3a3a;
+  color: #ddd;
+  border: 1px solid #555;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'Source Sans 3', sans-serif;
+  transition: background .15s;
+}
+.btn:hover { background: #4a4a4a; }
+.btn.primary { background: #1a5f7a; border-color: #2a8aaa; color: #fff; }
+.btn.primary:hover { background: #145070; }
+.btn.success { background: #3d6b35; border-color: #5a9a4e; color: #fff; }
+.btn.success:hover { background: #2d5227; }
+.btn.danger { background: #7a1f1f; border-color: #aa3030; color: #fff; }
+.btn.danger:hover { background: #5a1818; }
+
+#search-input {
+  background: #3a3a3a;
+  color: #eee;
+  border: 1px solid #555;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  width: 180px;
+}
+
+#count-label { color: #888; font-size: 11px; margin-left: 4px; }
+#selected-label { color: #a8d8ea; font-size: 11px; font-weight: 600; }
+
+.sep { width: 1px; background: #444; align-self: stretch; margin: 0 4px; }
+
+/* ================================================================
+   FILTER CHIPS ROW
+   ================================================================ */
+#filter-row {
+  background: #232323;
+  border-bottom: 1px solid #333;
+  padding: 8px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+  position: sticky;
+  top: var(--topbar-h, 52px);
+  z-index: 190;
+}
+
+.chip {
+  background: #3a3a3a;
+  color: #ccc;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+  transition: background .1s;
+}
+.chip:hover { background: #4a4a4a; }
+.chip.active { background: #1a5f7a; color: #fff; border-color: #2a8aaa; }
+.chip.item-chip { background: #3d4d3a; }
+.chip.item-chip.active { background: #3d6b35; border-color: #5a9a4e; }
+
+.filter-label { color: #666; font-size: 11px; margin-right: 2px; }
+
+/* ================================================================
+   NO DATA SCREEN
+   ================================================================ */
+#no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 80px 20px;
+  text-align: center;
+}
+#no-data h2 { font-family: 'Cinzel', serif; color: #a8d8ea; font-size: 22px; }
+#no-data p { color: #888; max-width: 400px; line-height: 1.6; }
+#no-data .drop-zone {
+  border: 2px dashed #555;
+  border-radius: 8px;
+  padding: 40px 60px;
+  color: #666;
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+#no-data .drop-zone:hover, #no-data .drop-zone.drag-over {
+  border-color: #1a5f7a;
+  color: #a8d8ea;
+}
+
+/* ================================================================
+   TABLE
+   ================================================================ */
+#table-wrap {
+  padding: 0 0 80px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+thead th {
+  background: #2a2a2a;
+  color: #aaa;
+  font-weight: 600;
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #444;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  position: sticky;
+  top: calc(var(--topbar-h, 52px) + var(--filter-h, 40px));
+  z-index: 180;
+}
+thead th:hover { color: #ddd; }
+thead th .sort-arrow { margin-left: 4px; opacity: 0.4; }
+thead th.sorted .sort-arrow { opacity: 1; color: #a8d8ea; }
+
+tbody tr {
+  border-bottom: 1px solid #2a2a2a;
+  cursor: pointer;
+  transition: background .1s;
+}
+tbody tr:hover { background: #2a2a2a; }
+tbody tr.selected { background: #1a3a4a; }
+tbody tr.selected:hover { background: #1a4a5a; }
+
+tbody td {
+  padding: 6px 10px;
+  vertical-align: middle;
+  color: #ccc;
+}
+
+td.name-cell { font-weight: 600; color: #eee; min-width: 160px; }
+td.type-spell { color: #a8d8ea; }
+td.type-item { color: #b8d9b0; }
+td.type-magic { color: #d4a8ea; }
+
+td input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: #1a5f7a;
+}
+
+.rarity-common    { color: #ccc; }
+.rarity-uncommon  { color: #1eff00; }
+.rarity-rare      { color: #0070ff; }
+.rarity-very-rare { color: #a335ee; }
+.rarity-legendary { color: #ff8000; }
+
+/* ================================================================
+   HOVER PREVIEW
+   ================================================================ */
+#preview-portal {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  display: none;
+}
+
+.preview-card-wrap {
+  width: 260px;
+  height: 379px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.7);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   CARD STYLES (same as v3)
+   ================================================================ */
+.card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--card-rule);
+  background: var(--card-bg);
+  overflow: hidden;
+  font-size: 19.5px;
+  line-height: 1.4;
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  color: var(--body-text);
+}
+
+.card-header {
+  display: flex;
+  align-items: stretch;
+  flex-shrink: 0;
+  overflow: hidden;
+  min-width: 0;
+}
+.card-header-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+  padding: 3mm 3.5mm;
+}
+.card-icon { width: 8mm; height: 8mm; flex-shrink: 0; }
+.card-icon svg { width: 100%; height: 100%; overflow: visible; }
+.card-title-block { flex: 1; min-width: 0; overflow: hidden; }
+.card-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 1.15;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  overflow: visible;
+}
+.card-subtitle {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: rgba(255,255,255,.8);
+  line-height: 1.4;
+  margin-top: .5px;
+  overflow: visible;
+}
+.card-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0 2mm;
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  text-align: center;
+}
+.damage-bar {
+  background: var(--item-damage-bg);
+  color: var(--item-damage-txt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2mm;
+  padding: 1.5mm 3mm;
+  flex-shrink: 0;
+}
+.dmg-type { font-size: 13px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; opacity: .9; }
+.dmg-dice { font-size: 22px; font-weight: 900; line-height: 1; font-family: 'Source Sans 3', sans-serif; letter-spacing: .02em; }
+.dmg-ability { font-size: 13px; font-weight: 700; opacity: .9; }
+.ac-bar { background: #2a5a8a; }
+.ac-bar .dmg-dice { font-size: 16px; }
+.prop-bar { font-size: 18px; font-weight: 600; padding: 1.5mm 3mm; flex-shrink: 0; letter-spacing: .01em; }
+.card-body {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+  padding: 2.5mm 3mm;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5mm;
+  background-image: var(--paper-line);
+}
+.stat { font-size: 1em; line-height: 1.4; }
+.stat strong { font-weight: 700; }
+.stat-desc { font-size: 1em; line-height: 1.4; }
+.sub-entry { font-size: 0.923em; line-height: 1.4; padding-left: 4mm; font-family: 'IM Fell English', serif; }
+.sub-entry em { font-style: italic; }
+.higher-level {
+  font-size: 0.923em; line-height: 1.35;
+  font-family: 'Source Sans 3', sans-serif;
+  font-style: italic; margin-top: .5mm;
+  border-top: .5px solid var(--card-rule);
+  padding-top: .8mm;
+}
+.higher-level strong { font-style: normal; font-family: 'Source Sans 3', sans-serif; font-weight: 700; }
+.mastery-block { margin-top: .5mm; border-top: .5px solid var(--card-rule); padding-top: .8mm; }
+.item-stat { font-size: 0.8em; line-height: 1.35; }
+.mastery-title { font-weight: 700; font-size: 19.5px; color: var(--mastery-color); }
+.mastery-text { font-size: 19.5px; }
+.card-footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5mm 3mm;
+  font-size: 19.5px;
+  font-family: 'Cinzel', serif;
+  letter-spacing: .06em;
+}
+.card-footer .classes {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .03em;
+  opacity: .8;
+  text-align: right;
+  max-width: 60%;
+  line-height: 1.3;
+  white-space: normal;
+}
+
+.card.spell .card-header        { background: var(--spell-hdr); color: var(--spell-hdr-text); }
+.card.spell .card-badge         { background: var(--spell-badge-bg); color: var(--spell-badge); }
+.card.spell .card-footer        { background: var(--spell-foot); color: var(--spell-foot-text); }
+.card.spell .stat strong        { color: var(--spell-accent); }
+.card.spell .card-icon svg      { fill: #fff; }
+
+.card.item  .card-header        { background: var(--item-hdr); color: var(--item-hdr-text); }
+.card.item  .card-badge         { background: rgba(0,0,0,.2); color: rgba(255,255,255,.9); }
+.card.item  .card-footer        { background: var(--item-foot); color: var(--item-foot-text); }
+.card.item  .prop-bar           { background: var(--item-hdr); color: var(--item-hdr-text); }
+.card.item  .stat strong        { color: var(--item-accent); }
+.card.item  .card-icon svg      { fill: #fff; }
+
+/* ================================================================
+   MODAL — CUSTOM CARD BUILDER
+   ================================================================ */
+#modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#modal-overlay.open { display: flex; }
+
+#modal-box {
+  background: #242424;
+  border: 1px solid #444;
+  border-radius: 8px;
+  width: min(96vw, 920px);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#modal-header {
+  background: #1a5f7a;
+  color: #fff;
+  padding: 12px 18px;
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  letter-spacing: .05em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+#modal-header button {
+  background: none; border: none; color: rgba(255,255,255,.7);
+  font-size: 20px; cursor: pointer; line-height: 1; padding: 0 4px;
+}
+#modal-header button:hover { color: #fff; }
+
+#modal-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Form panel */
+#modal-form-panel {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-right: 1px solid #333;
+  min-width: 0;
+}
+
+.form-row { display: flex; flex-direction: column; gap: 3px; }
+.form-row label { font-size: 11px; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.form-row input, .form-row select, .form-row textarea {
+  background: #333; color: #eee; border: 1px solid #555;
+  border-radius: 4px; padding: 5px 8px; font-size: 12px;
+  font-family: 'Source Sans 3', sans-serif;
+  width: 100%;
+}
+.form-row textarea { resize: vertical; min-height: 60px; }
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+  outline: none; border-color: #1a5f7a;
+}
+.form-row select option { background: #333; }
+
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+.form-section-title {
+  font-size: 10px; color: #666; text-transform: uppercase;
+  letter-spacing: .06em; border-top: 1px solid #333;
+  padding-top: 10px; margin-top: 2px;
+}
+
+.type-tabs {
+  display: flex; gap: 6px;
+}
+.type-tab {
+  flex: 1; padding: 6px; text-align: center;
+  background: #333; color: #aaa; border: 1px solid #444;
+  border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;
+  transition: background .1s;
+}
+.type-tab:hover { background: #3a3a3a; }
+.type-tab.active-spell { background: #1a5f7a; color: #fff; border-color: #2a8aaa; }
+.type-tab.active-item  { background: #3d6b35; color: #fff; border-color: #5a9a4e; }
+
+#sub-entries-list { display: flex; flex-direction: column; gap: 6px; }
+.sub-entry-row { display: grid; grid-template-columns: 1fr 2fr 24px; gap: 6px; align-items: start; }
+.sub-entry-row input, .sub-entry-row textarea {
+  background: #333; color: #eee; border: 1px solid #555;
+  border-radius: 4px; padding: 4px 6px; font-size: 11px;
+  font-family: 'Source Sans 3', sans-serif; width: 100%;
+}
+.sub-entry-row textarea { min-height: 40px; resize: vertical; }
+.btn-remove-sub {
+  background: #5a1818; border: none; color: #ff9999;
+  border-radius: 3px; cursor: pointer; font-size: 14px; line-height: 1;
+  padding: 3px 5px; align-self: start;
+}
+.btn-remove-sub:hover { background: #7a2222; }
+
+/* Preview panel */
+#modal-preview-panel {
+  width: 240px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 12px;
+  gap: 10px;
+  overflow-y: auto;
+  background: #1e1e1e;
+}
+#modal-preview-panel .preview-label {
+  font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: .06em;
+}
+.modal-preview-wrap {
+  width: 200px; height: 292px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.6);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+#modal-footer {
+  padding: 12px 18px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  border-top: 1px solid #333;
+  flex-shrink: 0;
+  background: #242424;
+}
+
+/* ================================================================
+   PRINT VIEW
+   ================================================================ */
+#print-output { display: none; }
+
+@media print {
+  #topbar, #filter-row, #table-wrap, #no-data { display: none !important; }
+  #print-output { display: block !important; }
+
+  @page { size: A4 portrait; margin: 0; }
+  html, body {
+    width: 210mm; height: 297mm;
+    margin: 0; padding: 0;
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-page {
+    width: 210mm; height: 297mm;
+    padding: 7mm;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 4mm;
+    page-break-after: always;
+    break-after: page;
+    overflow: hidden;
+  }
+  .print-slot { overflow: hidden; min-height: 0; }
+  .card, .card * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <h1>D&amp;D Card Manager</h1>
+  <button class="btn primary" id="btn-import">📂 Load Data (ZIP)</button>
+  <input type="file" id="file-input" accept=".zip" style="display:none">
+  <button class="btn" id="btn-export" style="display:none">💾 Export ZIP</button>
+  <button class="btn danger" id="btn-clear" style="display:none" title="Clear localStorage and reload">🗑 Clear Data</button>
+  <button class="btn" id="btn-new-card" style="display:none">＋ New Card</button>
+  <div class="sep"></div>
+  <input type="text" id="search-input" placeholder="Search name, school, class…">
+  <div class="sep"></div>
+  <button class="btn" id="btn-select-all">Select All Filtered</button>
+  <button class="btn" id="btn-deselect-all">Deselect All</button>
+  <span id="selected-label"></span>
+  <div class="sep"></div>
+  <button class="btn success" id="btn-print">🖨 Print Selected</button>
+  <span class="count" id="count-label"></span>
+</div>
+
+<!-- FILTER ROW -->
+<div id="filter-row">
+  <span class="filter-label">Items:</span>
+  <span class="chip item-chip active" data-wpn="all">All</span>
+  <span class="chip item-chip" data-wpn="simple">Simple</span>
+  <span class="chip item-chip" data-wpn="martial">Martial</span>
+  <span class="chip item-chip" data-wpn="melee">Melee</span>
+  <span class="chip item-chip" data-wpn="ranged">Ranged</span>
+  <span class="chip item-chip" data-wpn="armour">Armour</span>
+  <span class="chip item-chip" data-wpn="potion">Potions</span>
+  <span class="chip item-chip" data-wpn="gear">Gear</span>
+  <span class="chip item-chip" data-wpn="magic">Magic</span>
+  <span class="chip item-chip" data-wpn="none">Hide Items</span>
+  <span style="margin: 0 6px; color:#444">|</span>
+  <span class="filter-label">Spells:</span>
+  <span class="chip active" data-lvl="all">All</span>
+  <span class="chip" data-lvl="0">Cantrip</span>
+  <span class="chip" data-lvl="1">1</span>
+  <span class="chip" data-lvl="2">2</span>
+  <span class="chip" data-lvl="3">3</span>
+  <span class="chip" data-lvl="4">4</span>
+  <span class="chip" data-lvl="5">5</span>
+  <span class="chip" data-lvl="6">6</span>
+  <span class="chip" data-lvl="7">7</span>
+  <span class="chip" data-lvl="8">8</span>
+  <span class="chip" data-lvl="9">9</span>
+  <span class="chip" data-lvl="none">Hide Spells</span>
+  <span style="margin: 0 6px; color:#444">|</span>
+  <span class="filter-label">Class:</span>
+  <span class="chip active" data-class="all">All</span>
+  <!-- class chips injected by JS -->
+</div>
+
+<!-- NO DATA SCREEN -->
+<div id="no-data" style="display:none">
+  <h2>No Card Data Loaded</h2>
+  <p>Import <strong>cards-data.zip</strong> to get started. The zip contains spells.json, items.json, and magic_items.json and will be saved to your browser's local storage.</p>
+  <div class="drop-zone" id="drop-zone">
+    <div>Drop <strong>cards-data.zip</strong> here</div>
+    <div style="margin-top:8px;font-size:11px">or click Load Data above</div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div id="table-wrap" style="display:none">
+  <table id="card-table">
+    <thead>
+      <tr>
+        <th style="width:32px"><input type="checkbox" id="check-all" title="Select/deselect all visible"></th>
+        <th data-sort="name">Name <span class="sort-arrow">↕</span></th>
+        <th data-sort="type">Type <span class="sort-arrow">↕</span></th>
+        <th data-sort="level">Level / Category <span class="sort-arrow">↕</span></th>
+        <th data-sort="school">School / Rarity <span class="sort-arrow">↕</span></th>
+        <th data-sort="source">Source <span class="sort-arrow">↕</span></th>
+        <th data-sort="classes">Classes <span class="sort-arrow">↕</span></th>
+      </tr>
+    </thead>
+    <tbody id="card-tbody"></tbody>
+  </table>
+</div>
+
+<!-- HOVER PREVIEW PORTAL -->
+<div id="preview-portal">
+  <div class="preview-card-wrap" id="preview-inner"></div>
+</div>
+
+<!-- CUSTOM CARD MODAL -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <div id="modal-header">
+      <span id="modal-title-text">New Card</span>
+      <button id="modal-close" title="Close">✕</button>
+    </div>
+    <div id="modal-body">
+
+      <!-- FORM PANEL -->
+      <div id="modal-form-panel">
+
+        <!-- Type tabs -->
+        <div class="form-row">
+          <label>Card Type</label>
+          <div class="type-tabs">
+            <div class="type-tab active-spell" data-mtype="spell">Spell</div>
+            <div class="type-tab" data-mtype="item">Item / Magic Item</div>
+          </div>
+        </div>
+
+        <!-- Shared -->
+        <div class="form-row">
+          <label>Name *</label>
+          <input type="text" id="f-name" placeholder="e.g. Fireball">
+        </div>
+
+        <!-- SPELL FIELDS -->
+        <div id="spell-fields">
+          <div class="form-grid-3">
+            <div class="form-row">
+              <label>Level</label>
+              <select id="f-level">
+                <option value="0">Cantrip</option>
+                <option value="1">1</option><option value="2">2</option>
+                <option value="3">3</option><option value="4">4</option>
+                <option value="5">5</option><option value="6">6</option>
+                <option value="7">7</option><option value="8">8</option>
+                <option value="9">9</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>School</label>
+              <select id="f-school">
+                <option>Abjuration</option><option>Conjuration</option>
+                <option>Divination</option><option>Enchantment</option>
+                <option>Evocation</option><option>Illusion</option>
+                <option>Necromancy</option><option>Transmutation</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>Cast Time</label>
+              <input type="text" id="f-casttime" placeholder="Action">
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label>Range</label>
+              <input type="text" id="f-range" placeholder="60 feet">
+            </div>
+            <div class="form-row">
+              <label>Duration</label>
+              <input type="text" id="f-duration" placeholder="Instantaneous">
+            </div>
+          </div>
+          <div class="form-row">
+            <label>Components (V, S, M — material in parentheses)</label>
+            <input type="text" id="f-components" placeholder="V, S, M (a pinch of sulfur)">
+          </div>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label>Classes (comma-separated)</label>
+              <input type="text" id="f-classes" placeholder="Wizard, Sorcerer">
+            </div>
+            <div class="form-row">
+              <label>Source (optional, e.g. PHB, XGtE)</label>
+              <input type="text" id="f-spell-source" placeholder="PHB">
+            </div>
+          </div>
+          <div class="form-row">
+            <label>Description</label>
+            <textarea id="f-description" rows="4"></textarea>
+          </div>
+          <div class="form-section-title">Sub-entries (optional — for lists like spell modes)</div>
+          <div id="sub-entries-list"></div>
+          <button class="btn" id="btn-add-sub" style="margin-top:4px;font-size:11px">＋ Add Sub-entry</button>
+          <div class="form-row" style="margin-top:4px">
+            <label>At Higher Levels (optional)</label>
+            <textarea id="f-higher" rows="2"></textarea>
+          </div>
+        </div>
+
+        <!-- ITEM FIELDS -->
+        <div id="item-fields" style="display:none">
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label>Category</label>
+              <input type="text" id="f-category" list="category-list" placeholder="Potion, Wondrous Item…">
+              <datalist id="category-list">
+                <option>Simple Melee Weapon</option><option>Simple Ranged Weapon</option>
+                <option>Martial Melee Weapon</option><option>Martial Ranged Weapon</option>
+                <option>Light Armour</option><option>Medium Armour</option><option>Heavy Armour</option>
+                <option>Shield</option><option>Potion</option><option>Scroll</option>
+                <option>Ring</option><option>Wand</option><option>Wondrous Item</option>
+                <option>Adventuring Gear</option><option>Artisan's Tools</option><option>Kit</option>
+                <option>Gaming Set</option><option>Musical Instrument</option>
+              </datalist>
+            </div>
+            <div class="form-row">
+              <label>Rarity (blank = mundane item)</label>
+              <select id="f-rarity">
+                <option value="">— Mundane —</option>
+                <option>Common</option><option>Uncommon</option>
+                <option>Rare</option><option>Very Rare</option><option>Legendary</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid-3">
+            <div class="form-row">
+              <label>Cost</label>
+              <input type="text" id="f-cost" placeholder="50 gp">
+            </div>
+            <div class="form-row">
+              <label>Weight</label>
+              <input type="text" id="f-weight" placeholder="1 lb.">
+            </div>
+            <div class="form-row">
+              <label>Source</label>
+              <input type="text" id="f-source" placeholder="DMG, XGtE…">
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label>Damage</label>
+              <input type="text" id="f-damage" placeholder="1d8">
+            </div>
+            <div class="form-row">
+              <label>Damage Type</label>
+              <input type="text" id="f-damagetype" placeholder="Slashing">
+            </div>
+          </div>
+          <div class="form-row">
+            <label>Armour Class (for armour/shields)</label>
+            <input type="text" id="f-ac" placeholder="14 + DEX modifier (max +2)">
+          </div>
+          <div class="form-row">
+            <label>Properties (comma-separated)</label>
+            <input type="text" id="f-properties" placeholder="Finesse, Light, Thrown (20/60)">
+          </div>
+          <div class="form-row" style="flex-direction:row;align-items:center;gap:8px">
+            <input type="checkbox" id="f-consumable" style="width:auto">
+            <label for="f-consumable" style="text-transform:none;letter-spacing:normal;font-size:12px;color:#ccc;cursor:pointer">Consumable (adds Consumable property tag)</label>
+          </div>
+          <div class="form-row">
+            <label>Description</label>
+            <textarea id="f-item-description" rows="5"></textarea>
+          </div>
+          <div class="form-section-title">Weapon Mastery (optional)</div>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label>Mastery Property</label>
+              <input type="text" id="f-mastery-prop" placeholder="Vex">
+            </div>
+            <div class="form-row">
+              <label>Mastery Text</label>
+              <input type="text" id="f-mastery-text" placeholder="If you hit a creature…">
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /form-panel -->
+
+      <!-- PREVIEW PANEL -->
+      <div id="modal-preview-panel">
+        <div class="preview-label">Live Preview</div>
+        <div class="modal-preview-wrap" id="modal-preview-wrap"></div>
+        <div id="modal-preview-warn" style="font-size:10px;color:#666;text-align:center;line-height:1.4;max-width:200px"></div>
+      </div>
+
+    </div><!-- /modal-body -->
+    <div id="modal-footer">
+      <button class="btn danger" id="modal-delete" style="display:none;margin-right:auto">🗑 Delete Card</button>
+      <button class="btn" id="modal-cancel">Cancel</button>
+      <button class="btn success" id="modal-save">Save Card</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT OUTPUT (hidden; shown only during print) -->
+<div id="print-output"></div>
+
+<script>
+// ================================================================
+//  SVG ICONS
+// ================================================================
+const SPELL_ICON = `<svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 2c4.4 0 8 3.6 8 8s-3.6 8-8 8-8-3.6-8-8 3.6-8 8-8zm0 2c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 2c2.2 0 4 1.8 4 4s-1.8 4-4 4-4-1.8-4-4 1.8-4 4-4zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>`;
+
+function itemIcon(card) {
+  const cat = (card.category || '').toLowerCase();
+  if (cat.includes('ranged')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 3 Q2 12 6 21" fill="none"/><line x1="6" y1="3" x2="6" y2="21"/><line x1="6" y1="12" x2="20" y2="12"/><polyline points="17,9 20,12 17,15"/><polyline points="7,10 5,8"/><polyline points="7,14 5,16"/></svg>`;
+  if (cat.includes('melee')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="4" y1="20" x2="20" y2="4"/><line x1="8" y1="10" x2="14" y2="16"/><circle cx="4" cy="20" r="1.2" fill="currentColor" stroke="none"/></svg>`;
+  if (cat.includes('potion')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="3" x2="15" y2="3"/><path d="M10 3 L7 9 C4 12 4 18 7 20 Q12 23 17 20 C20 18 20 12 17 9 L14 3"/><line x1="6.5" y1="14" x2="17.5" y2="14"/></svg>`;
+  if (cat.includes('armour') || cat.includes('armor') || cat.includes('shield')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 L20 7 L20 13 C20 17 16 21 12 22 C8 21 4 17 4 13 L4 7 Z"/></svg>`;
+  if (cat.includes('gear') || cat.includes('tool') || cat.includes('kit') || cat.includes('gaming') || cat.includes('instrument')) return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="8" width="12" height="13" rx="2"/><path d="M9 8 C9 5 15 5 15 8"/><line x1="12" y1="8" x2="12" y2="5"/><circle cx="12" cy="4" r="1" fill="currentColor" stroke="none"/></svg>`;
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>`;
+}
+
+function esc(s) {
+  return s == null ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function levelLabel(lvl) {
+  if (lvl === 0) return 'Cantrip';
+  const sfx = ['','st','nd','rd'];
+  return `${lvl}${sfx[lvl] || 'th'} Level`;
+}
+
+// ================================================================
+//  CARD RENDERER (identical to v3)
+// ================================================================
+function renderCard(c) {
+  const isSpell = c.type === 'spell';
+  const icon    = isSpell ? SPELL_ICON : itemIcon(c);
+
+  const badge = isSpell
+    ? `<div class="card-badge">${esc(c.level === 0 ? 'CANTRIP' : 'SPELL')}<br><b>${c.level === 0 ? '—' : c.level}</b></div>`
+    : c.cost ? `<div class="card-badge" style="font-size:15px;line-height:1.4">${esc(c.cost)}</div>` : '';
+
+  const subtitle = isSpell
+    ? `<div class="card-subtitle">${esc(c.school)} • ${esc(c.castTime)}</div>`
+    : `<div class="card-subtitle">${esc(c.category)}${c.rarity ? ' • ' + esc(c.rarity) : ''}</div>`;
+
+  function damageAbility(card) {
+    if (!card.properties) return 'STR';
+    const props = card.properties.join(' ');
+    if (props.includes('Finesse')) return 'STR / DEX';
+    if (props.includes('Ammunition')) return 'DEX';
+    if (props.includes('Thrown')) return 'STR';
+    return 'STR';
+  }
+
+  const cat = (c.category || '').toLowerCase();
+  const isArmour = cat.includes('armour') || cat.includes('armor') || cat.includes('shield');
+
+  function formatAC(ac) {
+    return ac.replace('+ DEX modifier (max +2)', '+ DEX (max +2)').replace('+ DEX modifier', '+ DEX');
+  }
+
+  const damageBar = !isSpell
+    ? isArmour && c.ac
+      ? `<div class="damage-bar ac-bar"><span class="dmg-type">ARMOUR CLASS</span><span class="dmg-dice">${esc(formatAC(c.ac))}</span></div>`
+      : c.damage && c.damage !== '—'
+        ? `<div class="damage-bar"><span class="dmg-type">${esc(c.damageType)}</span><span class="dmg-dice">${esc(c.damage)}</span><span class="dmg-ability">+ ${damageAbility(c)}</span></div>`
+        : ''
+    : '';
+
+  const header = `<div class="card-header"><div class="card-header-main"><div class="card-icon">${icon}</div><div class="card-title-block"><div class="card-title">${esc(c.name)}</div>${subtitle}</div></div>${!isSpell ? '' : badge}</div>`;
+
+  let propBar = '';
+  if (!isSpell) {
+    const props = [...(c.properties || [])];
+    if (c.consumable) props.push('Consumable');
+    if (props.length) propBar = `<div class="prop-bar">Properties: ${esc(props.join(' · '))}</div>`;
+  }
+
+  let body = '';
+  if (isSpell) {
+    if (c.range)       body += `<p class="stat"><strong>Range:</strong> ${esc(c.range)}</p>`;
+    if (c.components)  body += `<p class="stat"><strong>Components:</strong> ${esc(c.components)}</p>`;
+    if (c.duration)    body += `<p class="stat"><strong>Duration:</strong> ${esc(c.duration)}</p>`;
+    if (c.description) body += `<p class="stat-desc">${esc(c.description)}</p>`;
+    if (c.subEntries)  c.subEntries.forEach(e => body += `<p class="sub-entry"><em>${esc(e.label)}:</em> ${esc(e.text)}</p>`);
+    if (c.higherLevel) body += `<p class="higher-level"><strong>At Higher Levels:</strong> ${esc(c.higherLevel)}</p>`;
+  } else {
+    if (c.weight && c.weight !== '—') body += `<p class="stat item-stat"><strong>Weight:</strong> ${esc(c.weight)}</p>`;
+    if (c.description) body += `<p class="stat-desc item-stat">${esc(c.description)}</p>`;
+    if (c.masteryProperty || c.masteryText)
+      body += `<div class="mastery-block"><p class="mastery-title item-stat">Mastery: ${esc(c.masteryProperty)}</p><p class="mastery-text item-stat">${esc(c.masteryText)}</p></div>`;
+  }
+
+  const footLeft  = isSpell ? esc(levelLabel(c.level)) : esc(c.category || 'Item');
+  const footRight = isSpell && c.classes ? esc(c.classes.join(', ')) : (c.source ? esc(c.source) : '');
+
+  return `<div class="card ${c.type}">${header}${!isSpell ? damageBar : ''}${propBar}<div class="card-body">${body}</div><div class="card-footer"><span>${footLeft}</span><span class="classes">${footRight}</span></div></div>`;
+}
+
+function fitText(body) {
+  const MIN_SIZE = 11, MAX_SIZE = 27, BASE_SIZE = 19;
+  body.style.fontSize = ''; body.style.gap = ''; body.style.overflow = 'hidden';
+  void body.offsetHeight;
+  const avail = body.clientHeight;
+  const isSpell = !!body.querySelector('.stat-desc:not(.item-stat)');
+  let lo = MIN_SIZE, hi = isSpell ? 19.5 : MAX_SIZE, best = MIN_SIZE;
+  if (isSpell) {
+    body.style.fontSize = '19.5px'; void body.offsetHeight;
+    if (body.scrollHeight <= avail) { best = 19.5; lo = hi; }
+  }
+  for (let i = 0; i < 16; i++) {
+    const mid = (lo + hi) / 2;
+    body.style.fontSize = mid + 'px';
+    body.style.gap = Math.max(0.3, (mid / BASE_SIZE)) + 'mm';
+    void body.offsetHeight;
+    if (body.scrollHeight <= avail) { best = mid; lo = mid; } else { hi = mid; }
+  }
+  body.style.fontSize = best + 'px';
+  body.style.gap = Math.max(0.3, (best / BASE_SIZE)) + 'mm';
+}
+
+function fitTitle(titleEl) {
+  const MAX = 24, MIN = 9;
+  titleEl.style.fontSize = ''; void titleEl.offsetWidth;
+  if (titleEl.scrollWidth <= titleEl.clientWidth) return;
+  let size = MAX;
+  while (size > MIN && titleEl.scrollWidth > titleEl.clientWidth) {
+    size -= 1; titleEl.style.fontSize = size + 'px'; void titleEl.offsetWidth;
+  }
+}
+
+// ================================================================
+//  STATE
+// ================================================================
+let ALL_DATA = [];
+let selectedIds = new Set();
+let sortKey = 'name', sortAsc = true;
+let activeWeapon = 'all', activeLevels = new Set(['all']), activeClasses = new Set(['all']);
+let hideSpells = false;
+
+// ================================================================
+//  LOCALSTORAGE
+// ================================================================
+const LS_SPELLS = 'dnd_cards_spells_v4';
+const LS_ITEMS  = 'dnd_cards_items_v4';
+const LS_MAGIC  = 'dnd_cards_magic_v4';
+
+function saveToStorage(spells, items, magic) {
+  try {
+    localStorage.setItem(LS_SPELLS, JSON.stringify(spells));
+    localStorage.setItem(LS_ITEMS,  JSON.stringify(items));
+    localStorage.setItem(LS_MAGIC,  JSON.stringify(magic));
+  } catch(e) { alert('Storage error: ' + e.message); }
+}
+
+function loadFromStorage() {
+  try {
+    const s = localStorage.getItem(LS_SPELLS);
+    const i = localStorage.getItem(LS_ITEMS);
+    const m = localStorage.getItem(LS_MAGIC);
+    if (!s && !i && !m) return null;
+    return [
+      s ? JSON.parse(s) : [],
+      i ? JSON.parse(i) : [],
+      m ? JSON.parse(m) : []
+    ];
+  } catch(e) { return null; }
+}
+
+function clearStorage() {
+  localStorage.removeItem(LS_SPELLS);
+  localStorage.removeItem(LS_ITEMS);
+  localStorage.removeItem(LS_MAGIC);
+}
+
+// ================================================================
+//  ZIP IMPORT / EXPORT
+// ================================================================
+async function importZip(file) {
+  try {
+    const zip = await JSZip.loadAsync(file);
+    const readJson = async (name) => {
+      const f = zip.file(name);
+      if (!f) return [];
+      const txt = await f.async('string');
+      return JSON.parse(txt);
+    };
+    const spells = await readJson('spells.json');
+    const items  = await readJson('items.json');
+    const magic  = await readJson('magic_items.json');
+    saveToStorage(spells, items, magic);
+    initData([...spells, ...items, ...magic]);
+    alert(`Loaded: ${spells.length} spells, ${items.length} items, ${magic.length} magic items.`);
+  } catch(e) { alert('Failed to load ZIP: ' + e.message); }
+}
+
+function prettyJSON(obj) {
+  // Like JSON.stringify(obj, null, 2) but keeps simple arrays (all scalars) on one line.
+  function fmt(val, depth) {
+    if (val === null || typeof val !== 'object') return JSON.stringify(val);
+    if (Array.isArray(val)) {
+      // If every element is a scalar, inline it
+      if (val.every(v => v === null || typeof v !== 'object')) {
+        return '[' + val.map(v => JSON.stringify(v)).join(', ') + ']';
+      }
+      const pad = '  '.repeat(depth + 1);
+      const inner = val.map(v => pad + fmt(v, depth + 1)).join(',\n');
+      return '[\n' + inner + '\n' + '  '.repeat(depth) + ']';
+    }
+    const pad = '  '.repeat(depth + 1);
+    const inner = Object.entries(val)
+      .map(([k, v]) => pad + JSON.stringify(k) + ': ' + fmt(v, depth + 1))
+      .join(',\n');
+    return '{\n' + inner + '\n' + '  '.repeat(depth) + '}';
+  }
+  return fmt(obj, 0);
+}
+
+async function exportZip() {
+  const zip = new JSZip();
+  const s = prettyJSON(JSON.parse(localStorage.getItem(LS_SPELLS) || '[]'));
+  const i = prettyJSON(JSON.parse(localStorage.getItem(LS_ITEMS)  || '[]'));
+  const m = prettyJSON(JSON.parse(localStorage.getItem(LS_MAGIC)  || '[]'));
+  zip.file('spells.json',      s);
+  zip.file('items.json',       i);
+  zip.file('magic_items.json', m);
+  const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'cards-data.zip'; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+// ================================================================
+//  DATA INIT
+// ================================================================
+function initData(data) {
+  ALL_DATA = data;
+  selectedIds.clear();
+  buildClassChips();
+  renderTable();
+  document.getElementById('no-data').style.display = 'none';
+  document.getElementById('table-wrap').style.display = '';
+  document.getElementById('btn-export').style.display = '';
+  document.getElementById('btn-clear').style.display = '';
+  document.getElementById('btn-new-card').style.display = '';
+}
+
+function buildClassChips() {
+  const classSet = new Set();
+  ALL_DATA.forEach(d => { if (d.classes) d.classes.forEach(c => classSet.add(c)); });
+  const bar = document.getElementById('filter-row');
+  // Remove old class chips (keep up to the "Class:" label and All chip)
+  bar.querySelectorAll('[data-class]:not([data-class="all"])').forEach(el => el.remove());
+  [...classSet].sort().forEach(cls => {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.textContent = cls;
+    chip.dataset.class = cls;
+    chip.addEventListener('click', () => toggleClass(cls));
+    bar.appendChild(chip);
+  });
+}
+
+// ================================================================
+//  FILTERING
+// ================================================================
+function getFiltered() {
+  const search = document.getElementById('search-input').value.trim().toLowerCase();
+
+  return ALL_DATA.filter(d => {
+    if (d.type === 'spell' && hideSpells) return false;
+
+    if (d.type === 'item') {
+      if (activeWeapon === 'none') return false;
+      const cat = d.category.toLowerCase();
+      if (activeWeapon === 'simple'  && !cat.includes('simple')) return false;
+      if (activeWeapon === 'martial' && !cat.includes('martial')) return false;
+      if (activeWeapon === 'melee'   && !cat.includes('melee')) return false;
+      if (activeWeapon === 'ranged'  && !cat.includes('ranged')) return false;
+      if (activeWeapon === 'armour'  && !cat.includes('armour') && !cat.includes('shield')) return false;
+      if (activeWeapon === 'potion'  && !cat.includes('potion')) return false;
+      if (activeWeapon === 'gear'    && !cat.includes('gear') && !cat.includes('tool') && !cat.includes('kit') && !cat.includes('gaming') && !cat.includes('instrument')) return false;
+      if (activeWeapon === 'magic'   && !d.rarity) return false;
+    }
+
+    if (d.type === 'spell' && !activeLevels.has('all') && !activeLevels.has(String(d.level))) return false;
+
+    if (!activeClasses.has('all') && d.type === 'spell') {
+      if (!d.classes || !d.classes.some(c => activeClasses.has(c))) return false;
+    }
+
+    if (search) {
+      const haystack = [d.name, ...(d.classes || []), d.school || '', d.category || '', d.rarity || ''].join(' ').toLowerCase();
+      if (!haystack.includes(search)) return false;
+    }
+
+    return true;
+  });
+}
+
+// ================================================================
+//  SORTING
+// ================================================================
+function getSortValue(d, key) {
+  switch (key) {
+    case 'name':    return d.name.toLowerCase();
+    case 'type':    return d.type + (d.rarity ? '0' : '1');
+    case 'level':   return d.type === 'spell' ? String(d.level).padStart(2, '0') : (d.category || '').toLowerCase();
+    case 'school':  return (d.school || d.rarity || '').toLowerCase();
+    case 'source':  return (d.source || '').toLowerCase();
+    case 'classes': return (d.classes || []).join(', ').toLowerCase();
+    default:        return '';
+  }
+}
+
+function sortData(data) {
+  return [...data].sort((a, b) => {
+    const va = getSortValue(a, sortKey);
+    const vb = getSortValue(b, sortKey);
+    return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+}
+
+// ================================================================
+//  TABLE RENDER
+// ================================================================
+function rarityClass(r) {
+  if (!r) return '';
+  const rr = r.toLowerCase();
+  if (rr === 'common')    return 'rarity-common';
+  if (rr === 'uncommon')  return 'rarity-uncommon';
+  if (rr === 'rare')      return 'rarity-rare';
+  if (rr === 'very rare') return 'rarity-very-rare';
+  if (rr === 'legendary') return 'rarity-legendary';
+  return '';
+}
+
+function renderTable() {
+  const filtered = getFiltered();
+  const sorted   = sortData(filtered);
+
+  const count = filtered.length;
+  const pages = Math.ceil(count / 4);
+  document.getElementById('count-label').textContent = `${count} card${count !== 1 ? 's' : ''} · ${pages} page${pages !== 1 ? 's' : ''}`;
+
+  const selCount = [...selectedIds].filter(id => ALL_DATA.find(d => d.name === id)).length;
+  document.getElementById('selected-label').textContent = selCount > 0 ? `${selCount} selected` : '';
+
+  // Update sort arrows
+  document.querySelectorAll('thead th[data-sort]').forEach(th => {
+    th.classList.toggle('sorted', th.dataset.sort === sortKey);
+    const arrow = th.querySelector('.sort-arrow');
+    if (arrow) arrow.textContent = th.dataset.sort === sortKey ? (sortAsc ? '↑' : '↓') : '↕';
+  });
+
+  const tbody = document.getElementById('card-tbody');
+  tbody.innerHTML = '';
+
+  sorted.forEach(d => {
+    const isMagic = d.type === 'item' && d.rarity;
+    const typeLabel = d.type === 'spell' ? 'Spell' : (isMagic ? 'Magic Item' : 'Item');
+    const typeClass = d.type === 'spell' ? 'type-spell' : (isMagic ? 'type-magic' : 'type-item');
+    const levelCell = d.type === 'spell' ? levelLabel(d.level) : (d.category || '—');
+    const schoolCell = d.type === 'spell' ? (d.school || '—') : (d.rarity || '—');
+    const id = d.name; // use name as unique id (names are unique in this dataset)
+    const isSelected = selectedIds.has(id);
+
+    const tr = document.createElement('tr');
+    tr.dataset.id = id;
+    if (isSelected) tr.classList.add('selected');
+
+    tr.innerHTML = `
+      <td><input type="checkbox" class="row-check" data-id="${esc(id)}" ${isSelected ? 'checked' : ''}></td>
+      <td class="name-cell">${esc(d.name)}</td>
+      <td class="${typeClass}">${typeLabel}</td>
+      <td>${esc(levelCell)}</td>
+      <td class="${rarityClass(d.rarity)}">${esc(schoolCell)}</td>
+      <td>${esc(d.source || (d.type === 'spell' ? 'PHB' : '—'))}</td>
+      <td>${esc((d.classes || []).join(', '))}</td>
+    `;
+
+    // Checkbox toggle
+    tr.querySelector('.row-check').addEventListener('change', (e) => {
+      e.stopPropagation();
+      toggleSelection(id, tr);
+    });
+
+    // Row click toggles selection (not on checkbox cell)
+    tr.addEventListener('click', (e) => {
+      if (e.target.type === 'checkbox') return;
+      toggleSelection(id, tr);
+    });
+
+    // Double-click to edit
+    tr.addEventListener('dblclick', (e) => {
+      if (e.target.type === 'checkbox') return;
+      openModal(d);
+    });
+
+    // Hover preview
+    tr.addEventListener('mouseenter', (e) => showPreview(d, e));
+    tr.addEventListener('mousemove',  (e) => positionPreview(e));
+    tr.addEventListener('mouseleave', hidePreview);
+
+    tbody.appendChild(tr);
+  });
+
+  // Header checkbox state
+  const allChecked = sorted.length > 0 && sorted.every(d => selectedIds.has(d.name));
+  document.getElementById('check-all').checked = allChecked;
+  document.getElementById('check-all').indeterminate = !allChecked && sorted.some(d => selectedIds.has(d.name));
+}
+
+function toggleSelection(id, tr) {
+  if (selectedIds.has(id)) {
+    selectedIds.delete(id);
+    tr.classList.remove('selected');
+    tr.querySelector('.row-check').checked = false;
+  } else {
+    selectedIds.add(id);
+    tr.classList.add('selected');
+    tr.querySelector('.row-check').checked = true;
+  }
+  updateSelectionLabel();
+}
+
+function updateSelectionLabel() {
+  const count = selectedIds.size;
+  document.getElementById('selected-label').textContent = count > 0 ? `${count} selected` : '';
+  // Update header checkbox
+  const filtered = getFiltered();
+  const allChecked = filtered.length > 0 && filtered.every(d => selectedIds.has(d.name));
+  document.getElementById('check-all').checked = allChecked;
+  document.getElementById('check-all').indeterminate = !allChecked && filtered.some(d => selectedIds.has(d.name));
+}
+
+// ================================================================
+//  SCALED PREVIEW — renders card at true print dimensions then scales to fit
+// ================================================================
+function renderScaledPreview(container, card) {
+  container.innerHTML = '';
+  // Inner div at true card dimensions (matches print layout: ~96mm × 140mm)
+  const inner = document.createElement('div');
+  inner.style.cssText = 'width:96mm;height:140mm;position:absolute;top:0;left:0;transform-origin:top left;';
+  inner.innerHTML = renderCard(card);
+  container.appendChild(inner);
+
+  // Double rAF: first tick makes the browser compute layout, second lets it settle
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      inner.querySelectorAll('.card-body').forEach(fitText);
+      inner.querySelectorAll('.card-title').forEach(fitTitle);
+      // Scale the full-size card to fit the container pixel box
+      const scale = Math.min(
+        container.clientWidth  / inner.offsetWidth,
+        container.clientHeight / inner.offsetHeight
+      );
+      inner.style.transform = `scale(${scale})`;
+    });
+  });
+}
+
+// ================================================================
+//  HOVER PREVIEW
+// ================================================================
+let previewTimeout = null;
+
+function showPreview(card, e) {
+  clearTimeout(previewTimeout);
+  previewTimeout = setTimeout(() => {
+    const portal = document.getElementById('preview-portal');
+    const inner  = document.getElementById('preview-inner');
+    portal.style.display = 'block';
+    positionPreview(e);
+    renderScaledPreview(inner, card);
+  }, 120);
+}
+
+function positionPreview(e) {
+  const portal = document.getElementById('preview-portal');
+  const W = portal.offsetWidth  || 334;
+  const H = portal.offsetHeight || 470;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  let x = e.clientX + 16, y = e.clientY + 16;
+  if (x + W > vw - 8) x = e.clientX - W - 16;
+  if (y + H > vh - 8) y = e.clientY - H - 16;
+  portal.style.left = Math.max(4, x) + 'px';
+  portal.style.top  = Math.max(4, y) + 'px';
+}
+
+function hidePreview() {
+  clearTimeout(previewTimeout);
+  document.getElementById('preview-portal').style.display = 'none';
+}
+
+// ================================================================
+//  PRINT
+// ================================================================
+function buildPrintPages() {
+  const cards = ALL_DATA.filter(d => selectedIds.has(d.name));
+  if (cards.length === 0) { alert('No cards selected. Check some rows first.'); return; }
+
+  const out = document.getElementById('print-output');
+  out.innerHTML = '';
+
+  for (let i = 0; i < cards.length; i += 4) {
+    const chunk = cards.slice(i, i + 4);
+    const page  = document.createElement('div');
+    // Apply layout inline so fitText can measure correctly off-screen
+    page.style.cssText = 'width:210mm;height:297mm;padding:7mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(2,1fr);gap:4mm;overflow:hidden;box-sizing:border-box;';
+
+    chunk.forEach(card => {
+      const slot = document.createElement('div');
+      slot.style.cssText = 'overflow:hidden;min-height:0;height:100%;';
+      slot.innerHTML = renderCard(card);
+      page.appendChild(slot);
+    });
+
+    for (let j = chunk.length; j < 4; j++) {
+      const empty = document.createElement('div');
+      empty.className = 'card';
+      empty.style.cssText = 'min-height:0;border:1px dashed #ccc;background:#fafafa;';
+      page.appendChild(empty);
+    }
+
+    out.appendChild(page);
+  }
+
+  // Show off-screen at print dimensions so fitText can measure real clientHeight
+  out.style.cssText = 'display:block;position:fixed;top:-99999px;left:0;';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      out.querySelectorAll('.card-body').forEach(fitText);
+      out.querySelectorAll('.card-title').forEach(fitTitle);
+      // Restore hidden — @media print will show it correctly
+      out.style.cssText = '';
+      window.print();
+    });
+  });
+}
+
+// ================================================================
+//  FILTER WIRING
+// ================================================================
+function wireFilters() {
+  // Item weapon chips
+  document.querySelectorAll('[data-wpn]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      activeWeapon = chip.dataset.wpn;
+      document.querySelectorAll('[data-wpn]').forEach(c => c.classList.toggle('active', c.dataset.wpn === activeWeapon));
+      renderTable();
+    });
+  });
+
+  // Level chips
+  document.querySelectorAll('[data-lvl]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const lvl = chip.dataset.lvl;
+      if (lvl === 'none') {
+        hideSpells = !hideSpells;
+        chip.classList.toggle('active', hideSpells);
+        renderTable();
+        return;
+      }
+      if (lvl === 'all') {
+        activeLevels = new Set(['all']);
+        hideSpells = false;
+      } else {
+        activeLevels.delete('all');
+        if (activeLevels.has(lvl)) activeLevels.delete(lvl);
+        else activeLevels.add(lvl);
+        if (activeLevels.size === 0) activeLevels = new Set(['all']);
+      }
+      document.querySelectorAll('[data-lvl]').forEach(c => {
+        if (c.dataset.lvl === 'none') return;
+        c.classList.toggle('active', activeLevels.has(c.dataset.lvl));
+      });
+      renderTable();
+    });
+  });
+
+  // All class chip
+  document.querySelector('[data-class="all"]').addEventListener('click', () => toggleClass('all'));
+
+  // Sort headers
+  document.querySelectorAll('thead th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      if (sortKey === th.dataset.sort) sortAsc = !sortAsc;
+      else { sortKey = th.dataset.sort; sortAsc = true; }
+      renderTable();
+    });
+  });
+
+  // Header checkbox
+  document.getElementById('check-all').addEventListener('change', (e) => {
+    const filtered = getFiltered();
+    if (e.target.checked) filtered.forEach(d => selectedIds.add(d.name));
+    else                   filtered.forEach(d => selectedIds.delete(d.name));
+    renderTable();
+  });
+
+  // Search
+  document.getElementById('search-input').addEventListener('input', renderTable);
+
+  // Select / deselect buttons
+  document.getElementById('btn-select-all').addEventListener('click', () => {
+    getFiltered().forEach(d => selectedIds.add(d.name));
+    renderTable();
+  });
+  document.getElementById('btn-deselect-all').addEventListener('click', () => {
+    selectedIds.clear();
+    renderTable();
+  });
+
+  // Print
+  document.getElementById('btn-print').addEventListener('click', buildPrintPages);
+
+  // Import
+  document.getElementById('btn-import').addEventListener('click', () => document.getElementById('file-input').click());
+  document.getElementById('file-input').addEventListener('change', (e) => {
+    if (e.target.files[0]) importZip(e.target.files[0]);
+    e.target.value = '';
+  });
+
+  // Export
+  document.getElementById('btn-export').addEventListener('click', exportZip);
+
+  // Clear
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    if (confirm('Clear all saved card data from local storage?')) {
+      clearStorage(); location.reload();
+    }
+  });
+
+  // Drop zone
+  const dropZone = document.getElementById('drop-zone');
+  if (dropZone) {
+    dropZone.addEventListener('click', () => document.getElementById('file-input').click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault(); dropZone.classList.remove('drag-over');
+      const f = e.dataTransfer.files[0];
+      if (f) importZip(f);
+    });
+  }
+}
+
+function toggleClass(cls) {
+  if (cls === 'all') {
+    activeClasses = new Set(['all']);
+  } else {
+    activeClasses.delete('all');
+    if (activeClasses.has(cls)) activeClasses.delete(cls);
+    else activeClasses.add(cls);
+    if (activeClasses.size === 0) activeClasses = new Set(['all']);
+  }
+  document.querySelectorAll('[data-class]').forEach(c => c.classList.toggle('active', activeClasses.has(c.dataset.class)));
+  renderTable();
+}
+
+// ================================================================
+//  CUSTOM CARD MODAL
+// ================================================================
+let modalType = 'spell';
+let editingCard = null; // card being edited, or null for new
+
+function openModal(card) {
+  editingCard = card || null;
+  const isEdit = !!card;
+
+  document.getElementById('modal-title-text').textContent = isEdit ? 'Edit Card' : 'New Card';
+  document.getElementById('modal-delete').style.display = isEdit ? '' : 'none';
+  document.getElementById('modal-overlay').classList.add('open');
+
+  // Reset sub-entries
+  document.getElementById('sub-entries-list').innerHTML = '';
+
+  if (card) {
+    // Fill form from existing card
+    setModalType(card.type);
+    document.getElementById('f-name').value = card.name || '';
+
+    if (card.type === 'spell') {
+      document.getElementById('f-level').value      = card.level ?? 0;
+      document.getElementById('f-school').value     = card.school || 'Evocation';
+      document.getElementById('f-casttime').value   = card.castTime || '';
+      document.getElementById('f-range').value      = card.range || '';
+      document.getElementById('f-duration').value   = card.duration || '';
+      document.getElementById('f-components').value = card.components || '';
+      document.getElementById('f-classes').value      = (card.classes || []).join(', ');
+      document.getElementById('f-spell-source').value = card.source || '';
+      document.getElementById('f-description').value  = card.description || '';
+      document.getElementById('f-higher').value     = card.higherLevel || '';
+      (card.subEntries || []).forEach(e => addSubEntry(e.label, e.text));
+    } else {
+      document.getElementById('f-category').value         = card.category || '';
+      document.getElementById('f-rarity').value           = card.rarity || '';
+      document.getElementById('f-cost').value             = card.cost || '';
+      document.getElementById('f-weight').value           = card.weight || '';
+      document.getElementById('f-source').value           = card.source || '';
+      document.getElementById('f-damage').value           = card.damage || '';
+      document.getElementById('f-damagetype').value       = card.damageType || '';
+      document.getElementById('f-ac').value               = card.ac || '';
+      document.getElementById('f-properties').value       = (card.properties || []).join(', ');
+      document.getElementById('f-consumable').checked     = !!card.consumable;
+      document.getElementById('f-item-description').value = card.description || '';
+      document.getElementById('f-mastery-prop').value     = card.masteryProperty || '';
+      document.getElementById('f-mastery-text').value     = card.masteryText || '';
+    }
+  } else {
+    // Clear form
+    setModalType('spell');
+    ['f-name','f-casttime','f-range','f-duration','f-components','f-classes','f-spell-source',
+     'f-description','f-higher','f-category','f-cost','f-weight','f-source',
+     'f-damage','f-damagetype','f-ac','f-properties','f-item-description',
+     'f-mastery-prop','f-mastery-text'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('f-level').value  = '0';
+    document.getElementById('f-school').value = 'Evocation';
+    document.getElementById('f-rarity').value = '';
+    document.getElementById('f-consumable').checked = false;
+  }
+
+  updateModalPreview();
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editingCard = null;
+}
+
+function setModalType(type) {
+  modalType = type;
+  document.querySelectorAll('.type-tab').forEach(t => {
+    t.className = 'type-tab' + (t.dataset.mtype === type
+      ? (type === 'spell' ? ' active-spell' : ' active-item') : '');
+  });
+  document.getElementById('spell-fields').style.display = type === 'spell' ? '' : 'none';
+  document.getElementById('item-fields').style.display  = type === 'item'  ? '' : 'none';
+  updateModalPreview();
+}
+
+function addSubEntry(label, text) {
+  const list = document.getElementById('sub-entries-list');
+  const row = document.createElement('div');
+  row.className = 'sub-entry-row';
+  row.innerHTML = `
+    <input type="text" placeholder="Label" value="${esc(label || '')}">
+    <textarea placeholder="Text">${esc(text || '')}</textarea>
+    <button class="btn-remove-sub" title="Remove">✕</button>
+  `;
+  row.querySelector('.btn-remove-sub').addEventListener('click', () => {
+    row.remove(); updateModalPreview();
+  });
+  row.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', updateModalPreview));
+  list.appendChild(row);
+  updateModalPreview();
+}
+
+function buildCardFromForm() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) return null;
+
+  if (modalType === 'spell') {
+    const subEntries = [];
+    document.querySelectorAll('#sub-entries-list .sub-entry-row').forEach(row => {
+      const [lbl, txt] = row.querySelectorAll('input, textarea');
+      if (lbl.value.trim() || txt.value.trim())
+        subEntries.push({ label: lbl.value.trim(), text: txt.value.trim() });
+    });
+    const card = {
+      type: 'spell',
+      name,
+      level:       parseInt(document.getElementById('f-level').value),
+      school:      document.getElementById('f-school').value,
+      castTime:    document.getElementById('f-casttime').value.trim() || 'Action',
+      range:       document.getElementById('f-range').value.trim(),
+      components:  document.getElementById('f-components').value.trim(),
+      duration:    document.getElementById('f-duration').value.trim(),
+      classes:     document.getElementById('f-classes').value.split(',').map(s => s.trim()).filter(Boolean),
+      description: document.getElementById('f-description').value.trim(),
+    };
+    const src = document.getElementById('f-spell-source').value.trim();
+    if (src) card.source = src;
+    if (subEntries.length) card.subEntries = subEntries;
+    const hl = document.getElementById('f-higher').value.trim();
+    if (hl) card.higherLevel = hl;
+    return card;
+  } else {
+    const propsRaw = document.getElementById('f-properties').value.trim();
+    const card = {
+      type:        'item',
+      name,
+      category:    document.getElementById('f-category').value.trim() || 'Wondrous Item',
+      description: document.getElementById('f-item-description').value.trim(),
+    };
+    const rarity = document.getElementById('f-rarity').value;
+    if (rarity) card.rarity = rarity;
+    const cost = document.getElementById('f-cost').value.trim();
+    if (cost) card.cost = cost;
+    const weight = document.getElementById('f-weight').value.trim();
+    if (weight) card.weight = weight;
+    const source = document.getElementById('f-source').value.trim();
+    if (source) card.source = source;
+    const damage = document.getElementById('f-damage').value.trim();
+    if (damage) card.damage = damage;
+    const dt = document.getElementById('f-damagetype').value.trim();
+    if (dt) card.damageType = dt;
+    const ac = document.getElementById('f-ac').value.trim();
+    if (ac) card.ac = ac;
+    if (propsRaw) card.properties = propsRaw.split(',').map(s => s.trim()).filter(Boolean);
+    if (document.getElementById('f-consumable').checked) card.consumable = true;
+    const mp = document.getElementById('f-mastery-prop').value.trim();
+    const mt = document.getElementById('f-mastery-text').value.trim();
+    if (mp) card.masteryProperty = mp;
+    if (mt) card.masteryText = mt;
+    return card;
+  }
+}
+
+function updateModalPreview() {
+  const wrap = document.getElementById('modal-preview-wrap');
+  const warn = document.getElementById('modal-preview-warn');
+  const card = buildCardFromForm();
+  if (!card) {
+    wrap.innerHTML = '';
+    warn.textContent = 'Enter a name to preview.';
+    return;
+  }
+  warn.textContent = '';
+  renderScaledPreview(wrap, card);
+}
+
+function saveModalCard() {
+  const card = buildCardFromForm();
+  if (!card) { alert('Please enter a card name.'); return; }
+
+  // Check for duplicate name (excluding the card being edited)
+  const duplicate = ALL_DATA.find(d => d.name.toLowerCase() === card.name.toLowerCase() && d !== editingCard);
+  if (duplicate) {
+    if (!confirm(`A card named "${card.name}" already exists. Save anyway?`)) return;
+  }
+
+  if (editingCard) {
+    // Replace existing card in ALL_DATA
+    const idx = ALL_DATA.indexOf(editingCard);
+    if (idx !== -1) ALL_DATA[idx] = card;
+  } else {
+    ALL_DATA.push(card);
+  }
+
+  // Persist — rebuild all three arrays from ALL_DATA
+  const spells = ALL_DATA.filter(d => d.type === 'spell');
+  const items  = ALL_DATA.filter(d => d.type === 'item' && !d.rarity);
+  const magic  = ALL_DATA.filter(d => d.type === 'item' && d.rarity);
+  saveToStorage(spells, items, magic);
+
+  closeModal();
+  renderTable();
+}
+
+function deleteModalCard() {
+  if (!editingCard) return;
+  if (!confirm(`Delete "${editingCard.name}"? This cannot be undone.`)) return;
+  const idx = ALL_DATA.indexOf(editingCard);
+  if (idx !== -1) ALL_DATA.splice(idx, 1);
+  selectedIds.delete(editingCard.name);
+  const spells = ALL_DATA.filter(d => d.type === 'spell');
+  const items  = ALL_DATA.filter(d => d.type === 'item' && !d.rarity);
+  const magic  = ALL_DATA.filter(d => d.type === 'item' && d.rarity);
+  saveToStorage(spells, items, magic);
+  closeModal();
+  renderTable();
+}
+
+function wireModal() {
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('modal-cancel').addEventListener('click', closeModal);
+  document.getElementById('modal-overlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  });
+  document.getElementById('modal-save').addEventListener('click', saveModalCard);
+  document.getElementById('modal-delete').addEventListener('click', deleteModalCard);
+  document.getElementById('btn-new-card').addEventListener('click', () => openModal(null));
+
+  // Type tabs
+  document.querySelectorAll('.type-tab').forEach(tab => {
+    tab.addEventListener('click', () => setModalType(tab.dataset.mtype));
+  });
+
+  // Add sub-entry
+  document.getElementById('btn-add-sub').addEventListener('click', () => addSubEntry('', ''));
+
+  // Live preview on any input change
+  document.getElementById('modal-form-panel').addEventListener('input', updateModalPreview);
+}
+
+// ================================================================
+//  STARTUP
+// ================================================================
+wireFilters();
+wireModal();
+
+// Measure sticky offsets after layout so filter row + thead track correctly
+function setStickyOffsets() {
+  const topbarH  = document.getElementById('topbar').offsetHeight;
+  const filterH  = document.getElementById('filter-row').offsetHeight;
+  document.documentElement.style.setProperty('--topbar-h', topbarH + 'px');
+  document.documentElement.style.setProperty('--filter-h', filterH + 'px');
+}
+setStickyOffsets();
+window.addEventListener('resize', setStickyOffsets);
+
+const stored = loadFromStorage();
+if (stored) {
+  const [spells, items, magic] = stored;
+  initData([...spells, ...items, ...magic]);
+} else {
+  document.getElementById('no-data').style.display = 'flex';
+  document.getElementById('table-wrap').style.display = 'none';
+}
+</script>
+</body>
+</html>
