@@ -633,14 +633,37 @@ td input[type="checkbox"] {
 <!-- NO DATA SCREEN -->
 <div id="no-data" style="display:none">
   <h2>No Card Data Loaded</h2>
-  <p>Import <strong>cards-data.zip</strong> to get started. The zip contains spells.json, items.json, and magic_items.json and will be saved to your browser's local storage.</p>
-  <p style="margin-top:12px">
-    <button class="btn primary" id="btn-fetch-zip">⬇ Load Data from Server</button>
-  </p>
-  <p style="margin-top:6px;font-size:11px;color:#666">or <a href="cards-data.zip" download style="color:#888">download cards-data.zip</a> and import it manually above</p>
+  <p>Choose a dataset to load, or import your own ZIP using <strong>Load Data (ZIP)</strong> above.</p>
+  <table style="margin:16px auto;border-collapse:collapse;text-align:left;color:#ccc;font-size:13px">
+    <thead>
+      <tr style="color:#888;font-size:11px;border-bottom:1px solid #334">
+        <th style="padding:4px 12px 4px 0">Edition</th>
+        <th style="padding:4px 12px">Contents</th>
+        <th style="padding:4px 0"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding:8px 12px 8px 0;white-space:nowrap"><strong>D&amp;D 2024</strong><br><span style="color:#888;font-size:11px">5.5e · PHB + SCAG/XGtE/TCE</span></td>
+        <td style="padding:8px 12px">479 spells · 107 items · 127 magic items</td>
+        <td style="padding:8px 0;white-space:nowrap">
+          <button class="btn primary" id="btn-fetch-zip" data-file="cards-data.zip">⬇ Load</button>
+          <a href="cards-data.zip" download style="margin-left:6px;font-size:11px;color:#666">↓ zip</a>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:8px 12px 8px 0;white-space:nowrap"><strong>D&amp;D 2014</strong><br><span style="color:#888;font-size:11px">5e · SRD 5.1 (CC-BY-4.0)</span></td>
+        <td style="padding:8px 12px">499 spells</td>
+        <td style="padding:8px 0;white-space:nowrap">
+          <button class="btn primary" id="btn-fetch-zip-2014" data-file="cards-data-2014.zip">⬇ Load</button>
+          <a href="cards-data-2014.zip" download style="margin-left:6px;font-size:11px;color:#666">↓ zip</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
   <div class="drop-zone" id="drop-zone">
-    <div>Drop <strong>cards-data.zip</strong> here</div>
-    <div style="margin-top:8px;font-size:11px">or click Load Data above</div>
+    <div>Drop a <strong>.zip</strong> here to import</div>
+    <div style="margin-top:8px;font-size:11px">or click Load Data (ZIP) above</div>
   </div>
 </div>
 
@@ -1122,18 +1145,19 @@ async function importZip(file) {
   } catch(e) { alert('Failed to load ZIP: ' + e.message); }
 }
 
-async function fetchZip() {
-  const btn = document.getElementById('btn-fetch-zip');
+async function fetchZip(btn) {
+  const file = btn.dataset.file;
+  const orig = btn.textContent;
   btn.textContent = 'Loading…';
   btn.disabled = true;
   try {
-    const res = await fetch('cards-data.zip');
+    const res = await fetch(file);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const blob = await res.blob();
     await importZip(blob);
   } catch(e) {
-    alert('Could not fetch cards-data.zip: ' + e.message);
-    btn.textContent = '⬇ Load Data from Server';
+    alert('Could not fetch ' + file + ': ' + e.message);
+    btn.textContent = orig;
     btn.disabled = false;
   }
 }
@@ -1574,7 +1598,8 @@ function wireFilters() {
   });
 
   // Fetch from server
-  document.getElementById('btn-fetch-zip').addEventListener('click', fetchZip);
+  document.getElementById('btn-fetch-zip').addEventListener('click', e => fetchZip(e.currentTarget));
+  document.getElementById('btn-fetch-zip-2014').addEventListener('click', e => fetchZip(e.currentTarget));
 
   // Export
   document.getElementById('btn-export').addEventListener('click', exportZip);

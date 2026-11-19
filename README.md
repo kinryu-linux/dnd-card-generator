@@ -43,11 +43,18 @@ When importing a ZIP while data is already loaded, you'll be asked how to handle
 
 ## Card data
 
-The included data covers D&D 2024 (5.5e) rules:
+Two datasets are included, selectable from the welcome screen:
 
+**D&D 2024 (5.5e)** — `cards-data.zip`
 - **479 spells** — PHB cantrips through 9th level, plus spells from SCAG, XGtE, and TCE, all tagged with class lists including Artificer
 - **107 mundane items** — weapons, armour, adventuring gear, tools, kits, gaming sets, and musical instruments
 - **127 magic items** — common through rare items appropriate for levels 1–5 (potions, scrolls, wands, rings, wondrous items) sourced from DMG, XGtE, and TCE
+
+**D&D 2014 (5e SRD)** — `cards-data-2014.zip`
+- **499 spells** — full SRD 5.1 spell list (CC-BY-4.0), sourced from [Open5e](https://open5e.com), with class lists
+- Items not included (SRD item text coverage is limited; use the 2024 items as a close reference)
+
+Both datasets can be loaded independently or merged together using the import merge options.
 
 ## Editing card data
 
