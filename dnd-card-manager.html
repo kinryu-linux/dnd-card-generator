@@ -586,19 +586,23 @@ td input[type="checkbox"] {
   <button class="btn danger" id="btn-clear" style="display:none" title="Clear localStorage and reload">🗑 Clear Data</button>
   <button class="btn" id="btn-new-card" style="display:none">＋ New Card</button>
   <div class="sep" id="sep-random" style="display:none"></div>
-  <select id="random-level" style="display:none" title="Spell level for random pick">
-    <option value="">Any level</option>
-    <option value="0">Cantrip</option>
-    <option value="1">Level 1</option><option value="2">Level 2</option>
-    <option value="3">Level 3</option><option value="4">Level 4</option>
-    <option value="5">Level 5</option><option value="6">Level 6</option>
-    <option value="7">Level 7</option><option value="8">Level 8</option>
-    <option value="9">Level 9</option>
+  <select id="random-type" style="display:none">
+    <option value="spell">Spell — Any Level</option>
+    <option value="spell-0">Spell — Cantrip</option>
+    <option value="spell-1">Spell — Level 1</option>
+    <option value="spell-2">Spell — Level 2</option>
+    <option value="spell-3">Spell — Level 3</option>
+    <option value="spell-4">Spell — Level 4</option>
+    <option value="spell-5">Spell — Level 5</option>
+    <option value="spell-6">Spell — Level 6</option>
+    <option value="spell-7">Spell — Level 7</option>
+    <option value="spell-8">Spell — Level 8</option>
+    <option value="spell-9">Spell — Level 9</option>
+    <option value="weapon">Weapon</option>
+    <option value="armour">Armour</option>
+    <option value="magic">Magic Item</option>
   </select>
-  <button class="btn" id="btn-random-spell" style="display:none" title="Add a random spell to selection">🎲 Spell</button>
-  <button class="btn" id="btn-random-weapon" style="display:none" title="Add a random weapon to selection">🎲 Weapon</button>
-  <button class="btn" id="btn-random-armour" style="display:none" title="Add a random armour to selection">🎲 Armour</button>
-  <button class="btn" id="btn-random-magic" style="display:none" title="Add a random magic item to selection">🎲 Magic Item</button>
+  <button class="btn" id="btn-random" style="display:none">🎲 Add Random</button>
   <div class="sep"></div>
   <input type="text" id="search-input" placeholder="Search name, description, school, class…">
   <div class="sep"></div>
@@ -1231,12 +1235,22 @@ function initData(data) {
   const hasWeapons = data.some(d => d.type === 'item' && !d.rarity && d.damage);
   const hasArmour  = data.some(d => d.type === 'item' && !d.rarity && d.ac);
   const hasMagic   = data.some(d => d.type === 'item' && d.rarity);
-  document.getElementById('sep-random').style.display        = (hasSpells || hasWeapons || hasArmour || hasMagic) ? '' : 'none';
-  document.getElementById('random-level').style.display      = hasSpells  ? '' : 'none';
-  document.getElementById('btn-random-spell').style.display  = hasSpells  ? '' : 'none';
-  document.getElementById('btn-random-weapon').style.display = hasWeapons ? '' : 'none';
-  document.getElementById('btn-random-armour').style.display = hasArmour  ? '' : 'none';
-  document.getElementById('btn-random-magic').style.display  = hasMagic   ? '' : 'none';
+  const showRandom = hasSpells || hasWeapons || hasArmour || hasMagic;
+  document.getElementById('sep-random').style.display   = showRandom ? '' : 'none';
+  document.getElementById('random-type').style.display  = showRandom ? '' : 'none';
+  document.getElementById('btn-random').style.display   = showRandom ? '' : 'none';
+  // Prune options that have no data
+  const sel = document.getElementById('random-type');
+  sel.querySelectorAll('option').forEach(o => {
+    const v = o.value;
+    if (v.startsWith('spell'))      o.disabled = !hasSpells;
+    else if (v === 'weapon')        o.disabled = !hasWeapons;
+    else if (v === 'armour')        o.disabled = !hasArmour;
+    else if (v === 'magic')         o.disabled = !hasMagic;
+  });
+  // Reset to first enabled option
+  const first = [...sel.options].find(o => !o.disabled);
+  if (first) sel.value = first.value;
 }
 
 function buildClassChips() {
@@ -1626,16 +1640,16 @@ function wireFilters() {
   });
 
   // Random selection
-  document.getElementById('btn-random-spell').addEventListener('click', () => {
-    const lvl = document.getElementById('random-level').value;
-    randomSelect(d => d.type === 'spell' && (lvl === '' || d.level === parseInt(lvl)));
+  document.getElementById('btn-random').addEventListener('click', () => {
+    const v = document.getElementById('random-type').value;
+    if (v === 'spell')        randomSelect(d => d.type === 'spell');
+    else if (v.startsWith('spell-')) {
+      const lvl = parseInt(v.split('-')[1]);
+      randomSelect(d => d.type === 'spell' && d.level === lvl);
+    } else if (v === 'weapon') randomSelect(d => d.type === 'item' && !d.rarity && !!d.damage);
+    else if (v === 'armour')   randomSelect(d => d.type === 'item' && !d.rarity && !!d.ac);
+    else if (v === 'magic')    randomSelect(d => d.type === 'item' && !!d.rarity);
   });
-  document.getElementById('btn-random-weapon').addEventListener('click', () =>
-    randomSelect(d => d.type === 'item' && !d.rarity && !!d.damage));
-  document.getElementById('btn-random-armour').addEventListener('click', () =>
-    randomSelect(d => d.type === 'item' && !d.rarity && !!d.ac));
-  document.getElementById('btn-random-magic').addEventListener('click', () =>
-    randomSelect(d => d.type === 'item' && !!d.rarity));
 
   // Print
   document.getElementById('btn-print').addEventListener('click', buildPrintPages);
