@@ -958,7 +958,7 @@ function renderCard(c) {
   }
 
   const damageBar = !isSpell
-    ? isArmour && c.ac
+    ? c.ac
       ? `<div class="damage-bar ac-bar"><span class="dmg-type">ARMOUR CLASS</span><span class="dmg-dice">${esc(formatAC(c.ac))}</span></div>`
       : c.damage && c.damage !== '—'
         ? `<div class="damage-bar"><span class="dmg-type">${esc(c.damageType)}</span><span class="dmg-dice">${esc(c.damage)}</span><span class="dmg-ability">+ ${damageAbility(c)}</span></div>`
@@ -1233,7 +1233,7 @@ function initData(data) {
   document.getElementById('btn-new-card').style.display = '';
   const hasSpells  = data.some(d => d.type === 'spell');
   const hasWeapons = data.some(d => d.type === 'item' && !d.rarity && d.damage);
-  const hasArmour  = data.some(d => d.type === 'item' && !d.rarity && d.ac);
+  const hasArmour  = data.some(d => d.type === 'item' && d.ac);
   const hasMagic   = data.some(d => d.type === 'item' && d.rarity);
   const showRandom = hasSpells || hasWeapons || hasArmour || hasMagic;
   document.getElementById('sep-random').style.display   = showRandom ? '' : 'none';
@@ -1647,7 +1647,7 @@ function wireFilters() {
       const lvl = parseInt(v.split('-')[1]);
       randomSelect(d => d.type === 'spell' && d.level === lvl);
     } else if (v === 'weapon') randomSelect(d => d.type === 'item' && !d.rarity && !!d.damage);
-    else if (v === 'armour')   randomSelect(d => d.type === 'item' && !d.rarity && !!d.ac);
+    else if (v === 'armour')   randomSelect(d => d.type === 'item' && !!d.ac);
     else if (v === 'magic')    randomSelect(d => d.type === 'item' && !!d.rarity);
   });
 
