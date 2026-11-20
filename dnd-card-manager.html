@@ -475,7 +475,8 @@ td input[type="checkbox"] {
 }
 .xml-picker-toggle input { cursor: pointer; }
 .xml-picker-toggle .count { color: #888; font-size: 11px; }
-#xml-picker-class-section { margin-top: 4px; }
+#xml-picker-source-section { margin-top: 4px; }
+#xml-picker-class-section { margin-top: 14px; }
 #xml-picker-class-section h4 {
   font-size: 12px;
   color: #aaa;
@@ -856,6 +857,10 @@ td input[type="checkbox"] {
     </div>
     <div id="xml-picker-body">
       <div class="xml-picker-toggles" id="xml-picker-toggles"></div>
+      <div id="xml-picker-source-section" style="display:none">
+        <h4>Sources <a id="xml-picker-src-all">Select all</a> <a id="xml-picker-src-none">Deselect all</a></h4>
+        <div class="xml-picker-class-list" id="xml-picker-source-list"></div>
+      </div>
       <div id="xml-picker-class-section" style="display:none">
         <h4>Classes <a id="xml-picker-all">Select all</a> <a id="xml-picker-none">Deselect all</a></h4>
         <div class="xml-picker-class-list" id="xml-picker-class-list"></div>
@@ -1555,7 +1560,9 @@ function showImportPicker(filename, spells, items, magic) {
   return new Promise(resolve => {
     const overlay = document.getElementById('xml-picker-overlay');
     const allClasses = [...new Set(spells.flatMap(s => s.classes))].sort();
-    const junkCount = allClasses.filter(_fcIsJunk).length;
+    const junkCount  = allClasses.filter(_fcIsJunk).length;
+    const NO_SRC = '(No source)';
+    const allSources = [...new Set([...spells, ...items, ...magic].map(c => c.source || NO_SRC))].sort();
 
     // Title
     document.getElementById('xml-picker-title').textContent =
@@ -1575,10 +1582,23 @@ function showImportPicker(filename, spells, items, magic) {
     const chkItems  = makeToggle('xpk-items',  'Items',  items.length);
     const chkMagic  = makeToggle('xpk-magic',  'Magic Items', magic.length);
 
+    // Source list
+    const sourceSection = document.getElementById('xml-picker-source-section');
+    const sourceList    = document.getElementById('xml-picker-source-list');
+    sourceList.innerHTML = allSources.map(s =>
+      `<label><input type="checkbox" data-src="${s}" checked> ${s}</label>`
+    ).join('');
+    sourceSection.style.display = allSources.length > 1 ? '' : 'none';
+
+    document.getElementById('xml-picker-src-all').onclick  = () =>
+      sourceList.querySelectorAll('input').forEach(i => i.checked = true);
+    document.getElementById('xml-picker-src-none').onclick = () =>
+      sourceList.querySelectorAll('input').forEach(i => i.checked = false);
+
     // Class list
     const classSection = document.getElementById('xml-picker-class-section');
-    const classList = document.getElementById('xml-picker-class-list');
-    const junkNote  = document.getElementById('xml-picker-junk-note');
+    const classList    = document.getElementById('xml-picker-class-list');
+    const junkNote     = document.getElementById('xml-picker-junk-note');
     const renderClasses = () => {
       classSection.style.display = chkSpells.checked && allClasses.length ? '' : 'none';
     };
@@ -1586,15 +1606,14 @@ function showImportPicker(filename, spells, items, magic) {
 
     classList.innerHTML = allClasses.map(c => {
       const isJunk = _fcIsJunk(c);
-      const checked = !isJunk ? 'checked' : '';
-      return `<label class="${isJunk ? 'junk' : ''}"><input type="checkbox" data-cls="${c}" ${checked}> ${c}</label>`;
+      return `<label class="${isJunk ? 'junk' : ''}"><input type="checkbox" data-cls="${c}" ${isJunk ? '' : 'checked'}> ${c}</label>`;
     }).join('');
 
     junkNote.textContent = junkCount
       ? `${junkCount} entr${junkCount===1?'y':'ies'} look like feature categories and have been unchecked.`
       : '';
 
-    document.getElementById('xml-picker-all').onclick = () =>
+    document.getElementById('xml-picker-all').onclick  = () =>
       classList.querySelectorAll('input').forEach(i => i.checked = true);
     document.getElementById('xml-picker-none').onclick = () =>
       classList.querySelectorAll('input').forEach(i => i.checked = false);
@@ -1602,10 +1621,7 @@ function showImportPicker(filename, spells, items, magic) {
     renderClasses();
     overlay.classList.add('open');
 
-    const close = (result) => {
-      overlay.classList.remove('open');
-      resolve(result);
-    };
+    const close = (result) => { overlay.classList.remove('open'); resolve(result); };
 
     document.getElementById('xml-picker-cancel').onclick   = () => close(null);
     document.getElementById('xml-picker-cancel-x').onclick = () => close(null);
@@ -1613,12 +1629,11 @@ function showImportPicker(filename, spells, items, magic) {
       const selectedClasses = new Set(
         [...classList.querySelectorAll('input:checked')].map(i => i.dataset.cls)
       );
-      close({
-        spells: chkSpells.checked,
-        items:  chkItems.checked,
-        magic:  chkMagic.checked,
-        classes: selectedClasses,
-      });
+      const selectedSources = new Set(
+        [...sourceList.querySelectorAll('input:checked')].map(i => i.dataset.src)
+      );
+      close({ spells: chkSpells.checked, items: chkItems.checked, magic: chkMagic.checked,
+              classes: selectedClasses, sources: selectedSources, NO_SRC });
     };
   });
 }
@@ -1641,10 +1656,11 @@ async function importXML(file) {
   const sel = await showImportPicker(file.name, parsed.spells, parsed.items, parsed.magic);
   if (!sel) return;
 
+  const inSrc = c => sel.sources.has(c.source || sel.NO_SRC);
   const filtered = [
-    ...(sel.spells ? parsed.spells.map(s => ({...s, classes: s.classes.filter(c => sel.classes.has(c))})) : []),
-    ...(sel.items  ? parsed.items  : []),
-    ...(sel.magic  ? parsed.magic  : []),
+    ...(sel.spells ? parsed.spells.filter(inSrc).map(s => ({...s, classes: s.classes.filter(c => sel.classes.has(c))})) : []),
+    ...(sel.items  ? parsed.items.filter(inSrc)  : []),
+    ...(sel.magic  ? parsed.magic.filter(inSrc)  : []),
   ];
   await _mergeCards(filtered);
 }
