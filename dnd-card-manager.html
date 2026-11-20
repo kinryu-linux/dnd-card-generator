@@ -1429,7 +1429,7 @@ function _fcStripSrc(text) {
 function _fcAbbrev(full) {
   if (!full) return '';
   const year = (full.match(/\((\d{4})\)/)||[])[1] || '';
-  let book = full.split('(')[0].trim().replace(/,\s*$/,'');
+  let book = full.split('(')[0].trim().replace(/,?\s*pp?\.?\s*\d+.*$/i, '').replace(/,\s*$/,'').trim();
   for (const [k,v] of Object.entries(_FC.BOOKS)) { if (book.includes(k)) { book=v; break; } }
   return year ? book+' ('+year+')' : book;
 }
