@@ -32,14 +32,27 @@ Cards are formatted as printable A4 sheets (4 per page) — handy for handing ou
 
 ## Importing data
 
-When importing a ZIP while data is already loaded, you'll be asked how to handle it:
+The app accepts two import formats:
+
+- **ZIP** — the app's own JSON format, exported via **Export ZIP**
+- **FightClub5eXML compendium** — a `.xml` compendium file built with [FightClub5eXML](https://github.com/vidalvanbergen/FightClub5eXML)
+
+FightClub5eXML is a community-maintained XML compendium for D&D 5e/5.5e, with spells, items, and magic items sourced from the official books. To use it:
+
+1. Clone or download the [FightClub5eXML repo](https://github.com/vidalvanbergen/FightClub5eXML).
+2. Run its build script to generate a single compendium file (e.g. `Core_Rulebooks_5.5e.xml`).
+3. Drag that `.xml` file onto the app's drop zone, or use **Load Data** to pick it.
+
+The app converts the XML to its internal card format on import — this is a one-time step and takes a second or two for large files.
+
+When importing while data is already loaded, you'll be asked how to handle it:
 
 | Option | Behaviour |
 |--------|-----------|
 | Merge — Accept duplicates | Appends everything; duplicate cards coexist |
 | Merge — Replace duplicates | Incoming version wins on name+type matches; everything else kept |
 | Merge — Skip duplicates | Existing version wins; only genuinely new cards added |
-| Delete & Replace | Wipes all existing data and loads only the new ZIP |
+| Delete & Replace | Wipes all existing data and loads only the new file |
 
 ## Card data
 

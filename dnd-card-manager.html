@@ -594,8 +594,8 @@ td input[type="checkbox"] {
 <!-- TOP BAR -->
 <div id="topbar">
   <h1>D&amp;D Card Manager</h1>
-  <button class="btn primary" id="btn-import">📂 Load Data (ZIP)</button>
-  <input type="file" id="file-input" accept=".zip" style="display:none">
+  <button class="btn primary" id="btn-import">📂 Load Data</button>
+  <input type="file" id="file-input" accept=".zip,.xml" style="display:none">
   <button class="btn" id="btn-export" style="display:none">💾 Export ZIP</button>
   <button class="btn danger" id="btn-clear" style="display:none" title="Clear localStorage and reload">🗑 Clear Data</button>
   <button class="btn" id="btn-new-card" style="display:none">＋ New Card</button>
@@ -668,7 +668,7 @@ td input[type="checkbox"] {
 <!-- NO DATA SCREEN -->
 <div id="no-data" style="display:none">
   <h2>No Card Data Loaded</h2>
-  <p>Choose a dataset to load, or import your own ZIP using <strong>Load Data (ZIP)</strong> above.</p>
+  <p>Choose a dataset below, drop a <strong>FightClub5eXML compendium</strong> (.xml), or import your own ZIP — all via <strong>Load Data</strong> above.</p>
   <table style="margin:16px auto;border-collapse:collapse;text-align:left;color:#ccc;font-size:13px">
     <thead>
       <tr style="color:#888;font-size:11px;border-bottom:1px solid #334">
@@ -697,8 +697,8 @@ td input[type="checkbox"] {
     </tbody>
   </table>
   <div class="drop-zone" id="drop-zone">
-    <div>Drop a <strong>.zip</strong> here to import</div>
-    <div style="margin-top:8px;font-size:11px">or click Load Data (ZIP) above</div>
+    <div>Drop a <strong>.zip</strong> or <strong>compendium .xml</strong> here</div>
+    <div style="margin-top:8px;font-size:11px">or click Load Data above · <a href="https://github.com/vidalvanbergen/FightClub5eXML" target="_blank" style="color:#1a8aaa">FightClub5eXML ↗</a></div>
   </div>
 </div>
 
@@ -1114,75 +1114,271 @@ function choiceDialog(message, options) {
   });
 }
 
+async function _mergeCards(incoming) {
+  const sp = incoming.filter(d => d.type === 'spell');
+  const it = incoming.filter(d => d.type === 'item' && !d.rarity);
+  const mg = incoming.filter(d => d.type === 'item' && d.rarity);
+
+  if (!ALL_DATA.length) {
+    saveToStorage(sp, it, mg);
+    initData(incoming);
+    alert(`Loaded: ${sp.length} spells, ${it.length} items, ${mg.length} magic items.`);
+    return;
+  }
+
+  const choice = await choiceDialog(
+    `You already have ${ALL_DATA.length} cards loaded. How should the import be handled?`,
+    ['Merge — Accept duplicates', 'Merge — Replace duplicates', 'Merge — Skip duplicates', 'Delete &amp; Replace']
+  );
+
+  let merged;
+  let added = 0, replaced = 0, skipped = 0;
+  const key = d => d.type + ':' + d.name;
+
+  if (choice === 3) {
+    merged = incoming;
+  } else if (choice === 0) {
+    merged = [...ALL_DATA, ...incoming];
+    added = incoming.length;
+  } else if (choice === 1) {
+    const incomingKeys = new Set(incoming.map(key));
+    const kept = ALL_DATA.filter(d => !incomingKeys.has(key(d)));
+    replaced = ALL_DATA.length - kept.length;
+    added = incoming.length - replaced;
+    merged = [...kept, ...incoming];
+  } else {
+    const existingKeys = new Set(ALL_DATA.map(key));
+    const toAdd = incoming.filter(d => !existingKeys.has(key(d)));
+    skipped = incoming.length - toAdd.length;
+    added = toAdd.length;
+    merged = [...ALL_DATA, ...toAdd];
+  }
+
+  const mergedSpells = merged.filter(d => d.type === 'spell');
+  const mergedItems  = merged.filter(d => d.type === 'item' && !d.rarity);
+  const mergedMagic  = merged.filter(d => d.type === 'item' && d.rarity);
+  saveToStorage(mergedSpells, mergedItems, mergedMagic);
+  initData(merged);
+
+  if (choice === 3) {
+    alert(`Replaced all data. ${merged.length} cards loaded.`);
+  } else {
+    const parts = [];
+    if (added)    parts.push(`${added} added`);
+    if (replaced) parts.push(`${replaced} replaced`);
+    if (skipped)  parts.push(`${skipped} skipped`);
+    alert(`Merge complete: ${parts.join(', ')}. Total: ${merged.length} cards.`);
+  }
+}
+
 async function importZip(file) {
   try {
     const zip = await JSZip.loadAsync(file);
     const readJson = async (name) => {
       const f = zip.file(name);
       if (!f) return [];
-      const txt = await f.async('string');
-      return JSON.parse(txt);
+      return JSON.parse(await f.async('string'));
     };
     const spells = await readJson('spells.json');
     const items  = await readJson('items.json');
     const magic  = await readJson('magic_items.json');
-    const incoming = [...spells, ...items, ...magic];
-
-    if (!ALL_DATA.length) {
-      saveToStorage(spells, items, magic);
-      initData(incoming);
-      alert(`Loaded: ${spells.length} spells, ${items.length} items, ${magic.length} magic items.`);
-      return;
-    }
-
-    const choice = await choiceDialog(
-      `You already have ${ALL_DATA.length} cards loaded. How should the import be handled?`,
-      ['Merge — Accept duplicates', 'Merge — Replace duplicates', 'Merge — Skip duplicates', 'Delete &amp; Replace']
-    );
-
-    let merged;
-    let added = 0, replaced = 0, skipped = 0;
-    const key = d => d.type + ':' + d.name;
-
-    if (choice === 3) {
-      // Delete & Replace
-      merged = incoming;
-    } else if (choice === 0) {
-      // Accept duplicates — append everything
-      merged = [...ALL_DATA, ...incoming];
-      added = incoming.length;
-    } else if (choice === 1) {
-      // Replace duplicates — incoming wins, existing non-duplicates kept
-      const incomingKeys = new Set(incoming.map(key));
-      const kept = ALL_DATA.filter(d => !incomingKeys.has(key(d)));
-      replaced = ALL_DATA.length - kept.length;
-      added = incoming.length - replaced;
-      merged = [...kept, ...incoming];
-    } else {
-      // Skip duplicates — existing wins
-      const existingKeys = new Set(ALL_DATA.map(key));
-      const toAdd = incoming.filter(d => !existingKeys.has(key(d)));
-      skipped = incoming.length - toAdd.length;
-      added = toAdd.length;
-      merged = [...ALL_DATA, ...toAdd];
-    }
-
-    const mergedSpells = merged.filter(d => d.type === 'spell');
-    const mergedItems  = merged.filter(d => d.type === 'item' && !d.rarity);
-    const mergedMagic  = merged.filter(d => d.type === 'item' && d.rarity);
-    saveToStorage(mergedSpells, mergedItems, mergedMagic);
-    initData(merged);
-
-    if (choice === 3) {
-      alert(`Replaced all data. ${merged.length} cards loaded.`);
-    } else {
-      const parts = [];
-      if (added)    parts.push(`${added} added`);
-      if (replaced) parts.push(`${replaced} replaced`);
-      if (skipped)  parts.push(`${skipped} skipped`);
-      alert(`Merge complete: ${parts.join(', ')}. Total: ${merged.length} cards.`);
-    }
+    await _mergeCards([...spells, ...items, ...magic]);
   } catch(e) { alert('Failed to load ZIP: ' + e.message); }
+}
+
+// ── FC5e XML COMPENDIUM CONVERTER ─────────────────────────────────────────────
+// Parses a FightClub5eXML compendium file into the app's card format.
+// Repo: https://github.com/vidalvanbergen/FightClub5eXML
+
+const _FC = {
+  SCHOOLS: {A:'Abjuration',C:'Conjuration',D:'Divination',EN:'Enchantment',
+            EV:'Evocation',I:'Illusion',N:'Necromancy',T:'Transmutation'},
+  DMG:     {A:'Acid',B:'Bludgeoning',C:'Cold',F:'Fire',FO:'Force',L:'Lightning',
+            N:'Necrotic',P:'Piercing',PO:'Poison',PY:'Psychic',R:'Radiant',
+            S:'Slashing',T:'Thunder'},
+  WPROPS:  {F:'Finesse',H:'Heavy',L:'Light',LD:'Loading',R:'Reach',T:'Thrown',
+            V:'Versatile',AF:'Ammunition',A:'Ammunition','2H':'Two-Handed',
+            S:'Special',RLD:'Reload',BF:'Burst Fire',M:null},
+  ARMOUR:  {LA:'Light Armour',MA:'Medium Armour',HA:'Heavy Armour',S:'Shield'},
+  MAGIC_CAT: {M:'Magic Weapon',R:'Magic Ranged Weapon',LA:'Magic Armor',MA:'Magic Armor',
+              HA:'Magic Armor',S:'Magic Shield',W:'Wondrous Item',P:'Potion',
+              RG:'Ring',ST:'Staff',WD:'Wand',SC:'Scroll',RD:'Rod'},
+  GEAR_CAT:  {'artisan tools':"Artisan's Tools",'gaming set':'Gaming Set',
+              'instrument':'Musical Instrument','musical instrument':'Musical Instrument'},
+  BOOKS:   {"Dungeon Master's Guide":'DMG',"Player's Handbook":'PHB',
+            "Xanathar's Guide to Everything":'XGtE',"Tasha's Cauldron of Everything":'TCE',
+            "Arcana Unleashed":'AU',"Eberron: Forge of the Nine":'EFotN',
+            "Heroes of the Forgotten Realms":'HFtR'},
+  CONSUMABLE: new Set(['P','SC']),
+  SKIP_CLS:   new Set(['Touch Spells','Cantrip']),
+};
+
+function _fcT(el, tag) {
+  const ch = el.getElementsByTagName(tag)[0];
+  return ch ? ch.textContent.trim() : '';
+}
+function _fcClean(s) {
+  return (s || '').replace(/\s*\[5\.5e\]/g,'').replace(/\s*\[5e\]/g,'').trim();
+}
+function _fcCost(v) {
+  if (!v) return null;
+  const f = parseFloat(v); if (isNaN(f) || f <= 0) return null;
+  const cp = Math.round(f * 100); if (!cp) return null;
+  if (cp < 10)  return cp + ' CP';
+  if (cp < 100) return (cp / 10 | 0) + ' SP';
+  const gp = cp / 100 | 0, sp = (cp % 100) / 10 | 0, rcp = cp % 10;
+  return [gp.toLocaleString()+' GP', sp?sp+' SP':'', rcp?rcp+' CP':''].filter(Boolean).join(', ');
+}
+function _fcWeight(w) {
+  if (!w) return null;
+  const f = parseFloat(w);
+  return isNaN(f) ? w : (f === (f|0) ? (f|0) : f) + ' lb';
+}
+function _fcProps(str) {
+  if (!str) return [];
+  return str.split(',').map(p=>p.trim()).filter(Boolean)
+    .map(p => { const v = _FC.WPROPS[p]; return v === undefined ? p : v; })
+    .filter(p => p !== null);
+}
+function _fcStripSrc(text) {
+  if (!text) return ['',''];
+  text = text.trim();
+  const m = text.match(/\nSource:\s*(.+?)$/m);
+  return m ? [text.slice(0, m.index).trim(), m[1].trim()] : [text, ''];
+}
+function _fcAbbrev(full) {
+  if (!full) return '';
+  const year = (full.match(/\((\d{4})\)/)||[])[1] || '';
+  let book = full.split('(')[0].trim().replace(/,\s*$/,'');
+  for (const [k,v] of Object.entries(_FC.BOOKS)) { if (book.includes(k)) { book=v; break; } }
+  return year ? book+' ('+year+')' : book;
+}
+function _fcRarity(detail) {
+  if (!detail) return [null, null];
+  const m = detail.match(/\(requires attunement(.*?)\)/i);
+  const att = m ? 'Requires Attunement'+(m[1] ? ' '+m[1].trim().replace(/^[, ]+/,'') : '') : null;
+  const r = detail.split('(')[0].trim();
+  return [r ? r.replace(/\b\w/g, c=>c.toUpperCase()) : null, att];
+}
+function _fcMastery(text) {
+  if (!text) return [null, null, text];
+  const m = text.trim().match(/^([\w][\w\s]+?)\s+\(Mastery\):\s*(.+?)(?=\n\n|\n[A-Z][a-z]|$)/s);
+  if (!m) return [null, null, text];
+  return [m[1].trim(), m[2].replace(/\s+/g,' ').replace(/[­·]\s*/g,'').trim(), text.slice(m[0].length).trim()];
+}
+function _fcWeaponCat(type_, text) {
+  return (/proficiency:\s*simple/i.test(text||'') ? 'Simple' : 'Martial') +
+         (type_==='M' ? ' Melee Weapon' : ' Ranged Weapon');
+}
+
+function _fcSpell(el) {
+  const name = _fcClean(_fcT(el,'name')); if (!name) return null;
+  const levelStr = _fcT(el,'level');
+  const classes = _fcT(el,'classes').split(',')
+    .map(p => _fcClean(p.trim()))
+    .filter(c => c && !c.startsWith('School:') && !c.includes('Ritual') && !_FC.SKIP_CLS.has(c));
+  let [desc, srcFull] = _fcStripSrc(_fcT(el,'text'));
+  let higher = '';
+  const hm = desc.match(/\n((?:Using a Higher.Level Spell Slot|At Higher Levels):.+)/si);
+  if (hm) { higher = hm[1].trim(); desc = desc.slice(0, hm.index).trim(); }
+  const spell = {
+    type:'spell', name, level: /^-?\d+$/.test(levelStr) ? parseInt(levelStr) : 0,
+    school: _FC.SCHOOLS[_fcT(el,'school')] || _fcT(el,'school'),
+    castTime: _fcT(el,'time'), range: _fcT(el,'range'),
+    components: _fcT(el,'components'), duration: _fcT(el,'duration'),
+    classes, description: desc,
+  };
+  const src = _fcAbbrev(srcFull); if (src) spell.source = src;
+  if (higher) spell.higherLevel = higher;
+  if (_fcT(el,'ritual')==='YES') spell.ritual = true;
+  return spell;
+}
+
+function _fcItem(el) {
+  const type_ = _fcT(el,'type');
+  if (type_==='$' || _fcT(el,'magic')==='YES') return null;
+  const name = _fcClean(_fcT(el,'name')); if (!name || name.includes('Trinket')) return null;
+  const [text] = _fcStripSrc(_fcT(el,'text'));
+  if (type_==='M' || type_==='R') {
+    const [mp,mt] = _fcMastery(text);
+    const range = _fcT(el,'range');
+    let props = _fcProps(_fcT(el,'property'));
+    if (range && props.includes('Thrown')) props = props.map(p=>p==='Thrown'?`Thrown (${range})`:p);
+    return { type:'item', name, category:_fcWeaponCat(type_,text),
+      cost:_fcCost(_fcT(el,'value')), weight:_fcWeight(_fcT(el,'weight')),
+      damage:_fcT(el,'dmg1')||null, damageType:_FC.DMG[_fcT(el,'dmgType')]||null,
+      ac:null, properties:props, description:'', masteryProperty:mp, masteryText:mt };
+  }
+  if (['LA','MA','HA','S'].includes(type_)) {
+    const props = [];
+    if (_fcT(el,'stealth')==='YES') props.push('Stealth Disadvantage');
+    const str = _fcT(el,'strength'); if (str) props.push('Str '+str+'+');
+    return { type:'item', name, category:_FC.ARMOUR[type_]||'Armour',
+      cost:_fcCost(_fcT(el,'value')), weight:_fcWeight(_fcT(el,'weight')),
+      damage:null, damageType:null, ac:_fcT(el,'ac')||null,
+      properties:props, description:'', masteryProperty:null, masteryText:null };
+  }
+  if (['G','A','P'].includes(type_)) {
+    const det = _fcT(el,'detail').toLowerCase();
+    const cat = _FC.GEAR_CAT[det] || (type_==='A'?'Ammunition':type_==='P'?'Potion':'Adventuring Gear');
+    return { type:'item', name, category:cat,
+      cost:_fcCost(_fcT(el,'value')), weight:_fcWeight(_fcT(el,'weight')),
+      damage:null, damageType:null, ac:null,
+      properties:[], description:text, masteryProperty:null, masteryText:null };
+  }
+  return null;
+}
+
+function _fcMagicItem(el) {
+  const type_ = _fcT(el,'type');
+  if (type_==='$' || !type_ || _fcT(el,'magic')!=='YES') return null;
+  const name = _fcClean(_fcT(el,'name')); if (!name) return null;
+  const [rarity, att] = _fcRarity(_fcT(el,'detail'));
+  let [text, srcFull] = _fcStripSrc(_fcT(el,'text'));
+  if (att) text = text ? `(${att})\n\n${text}` : `(${att})`;
+  const src = _fcAbbrev(srcFull);
+  const out = { type:'item', name, category:_FC.MAGIC_CAT[type_]||'Magic Item',
+    rarity, cost:null, weight:_fcWeight(_fcT(el,'weight')),
+    damage:_fcT(el,'dmg1')||null, damageType:_FC.DMG[_fcT(el,'dmgType')]||null,
+    ac:_fcT(el,'ac')||null, properties:_fcProps(_fcT(el,'property')),
+    description:text, masteryProperty:null, masteryText:null,
+    consumable:_FC.CONSUMABLE.has(type_) };
+  if (src) out.source = src;
+  return out;
+}
+
+function parseCompendiumXML(xmlText) {
+  const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+  const err = doc.querySelector('parsererror');
+  if (err) throw new Error('XML parse error: ' + err.textContent.slice(0,120));
+  const seenS = new Set(), seenI = new Set();
+  const spells = [], items = [], magic = [];
+  for (const el of doc.getElementsByTagName('spell')) {
+    if (el.parentElement?.tagName !== 'compendium') continue;
+    const s = _fcSpell(el);
+    if (s && !seenS.has(s.name)) { seenS.add(s.name); spells.push(s); }
+  }
+  for (const el of doc.getElementsByTagName('item')) {
+    if (el.parentElement?.tagName !== 'compendium') continue;
+    const isMagic = _fcT(el,'magic') === 'YES';
+    const k = (isMagic?'mg:':'it:') + _fcClean(_fcT(el,'name'));
+    if (seenI.has(k)) continue; seenI.add(k);
+    const card = isMagic ? _fcMagicItem(el) : _fcItem(el);
+    if (card) (isMagic ? magic : items).push(card);
+  }
+  return { spells, items, magic };
+}
+
+async function importXML(file) {
+  const btn = document.getElementById('btn-import');
+  const orig = btn.textContent; btn.textContent = 'Parsing XML…'; btn.disabled = true;
+  try {
+    const { spells, items, magic } = parseCompendiumXML(await file.text());
+    if (!spells.length && !items.length && !magic.length)
+      throw new Error('No spells or items found — is this a compendium file? (Collections files need to be compiled first)');
+    await _mergeCards([...spells, ...items, ...magic]);
+  } catch(e) { alert('Failed to load XML: ' + e.message); }
+  finally { btn.textContent = orig; btn.disabled = false; }
 }
 
 async function fetchZip(btn) {
@@ -1686,7 +1882,8 @@ function wireFilters() {
   // Import
   document.getElementById('btn-import').addEventListener('click', () => document.getElementById('file-input').click());
   document.getElementById('file-input').addEventListener('change', (e) => {
-    if (e.target.files[0]) importZip(e.target.files[0]);
+    const f = e.target.files[0];
+    if (f) f.name.toLowerCase().endsWith('.xml') ? importXML(f) : importZip(f);
     e.target.value = '';
   });
 
@@ -1713,7 +1910,7 @@ function wireFilters() {
     dropZone.addEventListener('drop', (e) => {
       e.preventDefault(); dropZone.classList.remove('drag-over');
       const f = e.dataTransfer.files[0];
-      if (f) importZip(f);
+      if (f) f.name.toLowerCase().endsWith('.xml') ? importXML(f) : importZip(f);
     });
   }
 }
