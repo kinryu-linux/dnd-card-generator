@@ -974,7 +974,7 @@ function renderCard(c) {
   const isArmour = cat.includes('armour') || cat.includes('armor') || cat.includes('shield');
 
   function formatAC(ac) {
-    return ac.replace('+ DEX modifier (max +2)', '+ DEX (max +2)').replace('+ DEX modifier', '+ DEX');
+    return String(ac).replace('+ DEX modifier (max +2)', '+ DEX (max +2)').replace('+ DEX modifier', '+ DEX');
   }
 
   const damageBar = !isSpell
