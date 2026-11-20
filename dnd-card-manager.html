@@ -716,7 +716,7 @@ td input[type="checkbox"] {
   <button class="btn primary" id="btn-import">📂 Load Data</button>
   <input type="file" id="file-input" accept=".zip,.xml" style="display:none">
   <button class="btn" id="btn-export" style="display:none">💾 Export ZIP</button>
-  <button class="btn danger" id="btn-clear" style="display:none" title="Clear localStorage and reload">🗑 Clear Data</button>
+  <button class="btn danger" id="btn-clear" style="display:none" title="Clear all data and reload">🗑 Clear Data</button>
   <button class="btn" id="btn-new-card" style="display:none">＋ New Card</button>
   <div class="sep" id="sep-random" style="display:none"></div>
   <select id="random-type" style="display:none">
@@ -1200,38 +1200,69 @@ let activeWeapon = 'all', activeLevels = new Set(['all']), activeClasses = new S
 let hideSpells = false;
 
 // ================================================================
-//  LOCALSTORAGE
+//  INDEXEDDB STORAGE
 // ================================================================
+const DB_NAME    = 'dndCards';
+const DB_VERSION = 1;
+const DB_STORE   = 'datasets';
+
+// Legacy localStorage keys for one-time migration
 const LS_SPELLS = 'dnd_cards_spells_v4';
 const LS_ITEMS  = 'dnd_cards_items_v4';
 const LS_MAGIC  = 'dnd_cards_magic_v4';
 
-function saveToStorage(spells, items, magic) {
-  try {
-    localStorage.setItem(LS_SPELLS, JSON.stringify(spells));
-    localStorage.setItem(LS_ITEMS,  JSON.stringify(items));
-    localStorage.setItem(LS_MAGIC,  JSON.stringify(magic));
-  } catch(e) { alert('Storage error: ' + e.message); }
+let _db = null;
+function openDB() {
+  if (_db) return Promise.resolve(_db);
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(DB_STORE);
+    req.onsuccess = e => { _db = e.target.result; resolve(_db); };
+    req.onerror   = e => reject(e.target.error);
+  });
 }
 
-function loadFromStorage() {
-  try {
-    const s = localStorage.getItem(LS_SPELLS);
-    const i = localStorage.getItem(LS_ITEMS);
-    const m = localStorage.getItem(LS_MAGIC);
-    if (!s && !i && !m) return null;
-    return [
-      s ? JSON.parse(s) : [],
-      i ? JSON.parse(i) : [],
-      m ? JSON.parse(m) : []
-    ];
-  } catch(e) { return null; }
+function dbGet(key) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const req = db.transaction(DB_STORE, 'readonly').objectStore(DB_STORE).get(key);
+    req.onsuccess = e => resolve(e.target.result ?? []);
+    req.onerror   = e => reject(e.target.error);
+  }));
 }
 
-function clearStorage() {
-  localStorage.removeItem(LS_SPELLS);
-  localStorage.removeItem(LS_ITEMS);
-  localStorage.removeItem(LS_MAGIC);
+function dbPut(key, value) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const req = db.transaction(DB_STORE, 'readwrite').objectStore(DB_STORE).put(value, key);
+    req.onsuccess = () => resolve();
+    req.onerror   = e => reject(e.target.error);
+  }));
+}
+
+async function saveToStorage(spells, items, magic) {
+  await Promise.all([dbPut('spells', spells), dbPut('items', items), dbPut('magic', magic)]);
+}
+
+async function loadFromStorage() {
+  // One-time migration from localStorage
+  const ls = localStorage.getItem(LS_SPELLS) || localStorage.getItem(LS_ITEMS) || localStorage.getItem(LS_MAGIC);
+  if (ls) {
+    try {
+      const sp = JSON.parse(localStorage.getItem(LS_SPELLS) || '[]');
+      const it = JSON.parse(localStorage.getItem(LS_ITEMS)  || '[]');
+      const mg = JSON.parse(localStorage.getItem(LS_MAGIC)  || '[]');
+      await saveToStorage(sp, it, mg);
+    } catch(e) {}
+    localStorage.removeItem(LS_SPELLS);
+    localStorage.removeItem(LS_ITEMS);
+    localStorage.removeItem(LS_MAGIC);
+  }
+  const [spells, items, magic] = await Promise.all([dbGet('spells'), dbGet('items'), dbGet('magic')]);
+  if (!spells.length && !items.length && !magic.length) return null;
+  return [spells, items, magic];
+}
+
+async function clearStorage() {
+  await Promise.all([dbPut('spells', []), dbPut('items', []), dbPut('magic', [])]);
 }
 
 // ================================================================
@@ -1659,9 +1690,10 @@ function prettyJSON(obj) {
 
 async function exportZip() {
   const zip = new JSZip();
-  const s = prettyJSON(JSON.parse(localStorage.getItem(LS_SPELLS) || '[]'));
-  const i = prettyJSON(JSON.parse(localStorage.getItem(LS_ITEMS)  || '[]'));
-  const m = prettyJSON(JSON.parse(localStorage.getItem(LS_MAGIC)  || '[]'));
+  const [spells, items, magic] = await Promise.all([dbGet('spells'), dbGet('items'), dbGet('magic')]);
+  const s = prettyJSON(spells);
+  const i = prettyJSON(items);
+  const m = prettyJSON(magic);
   zip.file('spells.json',      s);
   zip.file('items.json',       i);
   zip.file('magic_items.json', m);
@@ -2420,14 +2452,16 @@ function setStickyOffsets() {
 setStickyOffsets();
 window.addEventListener('resize', setStickyOffsets);
 
-const stored = loadFromStorage();
-if (stored) {
-  const [spells, items, magic] = stored;
-  initData([...spells, ...items, ...magic]);
-} else {
-  document.getElementById('no-data').style.display = 'flex';
-  document.getElementById('table-wrap').style.display = 'none';
-}
+(async () => {
+  const stored = await loadFromStorage();
+  if (stored) {
+    const [spells, items, magic] = stored;
+    initData([...spells, ...items, ...magic]);
+  } else {
+    document.getElementById('no-data').style.display = 'flex';
+    document.getElementById('table-wrap').style.display = 'none';
+  }
+})();
 </script>
 </body>
 </html>
