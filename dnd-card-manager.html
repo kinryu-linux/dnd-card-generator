@@ -954,9 +954,12 @@ function renderCard(c) {
     ? `<div class="card-badge">${esc(c.level === 0 ? 'CANTRIP' : 'SPELL')}<br><b>${c.level === 0 ? '—' : c.level}</b></div>`
     : c.cost ? `<div class="card-badge" style="font-size:15px;line-height:1.4">${esc(c.cost)}</div>` : '';
 
+  const attuneMatch = !isSpell && c.description && c.description.match(/^\(Requires Attunement([^)]*)\)\s*/i);
+  const attuneLabel = attuneMatch ? (attuneMatch[1].trim() ? `Attunement${attuneMatch[1]}` : 'Requires Attunement') : '';
+
   const subtitle = isSpell
     ? `<div class="card-subtitle">${esc(c.school)} • ${esc(c.castTime)}</div>`
-    : `<div class="card-subtitle">${esc(c.category)}${c.rarity ? ' • ' + esc(c.rarity) : ''}</div>`;
+    : `<div class="card-subtitle">${esc(c.category)}${c.rarity ? ' • ' + esc(c.rarity) : ''}${attuneLabel ? ' • ' + esc(attuneLabel) : ''}</div>`;
 
   function damageAbility(card) {
     if (!card.properties) return 'STR';
@@ -1001,7 +1004,8 @@ function renderCard(c) {
     if (c.higherLevel) body += `<p class="higher-level"><strong>At Higher Levels:</strong> ${esc(c.higherLevel)}</p>`;
   } else {
     if (c.weight && c.weight !== '—') body += `<p class="stat item-stat"><strong>Weight:</strong> ${esc(c.weight)}</p>`;
-    if (c.description) body += `<p class="stat-desc item-stat">${esc(c.description)}</p>`;
+    const itemDesc = attuneMatch ? c.description.slice(attuneMatch[0].length) : c.description;
+    if (itemDesc) body += `<p class="stat-desc item-stat">${esc(itemDesc)}</p>`;
     if (c.masteryProperty || c.masteryText)
       body += `<div class="mastery-block"><p class="mastery-title item-stat">Mastery: ${esc(c.masteryProperty)}</p><p class="mastery-text item-stat">${esc(c.masteryText)}</p></div>`;
   }
