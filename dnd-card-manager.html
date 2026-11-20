@@ -1276,11 +1276,12 @@ function _fcSpell(el) {
   const name = _fcClean(_fcT(el,'name')); if (!name) return null;
   const levelStr = _fcT(el,'level');
   const classes = (() => {
-    const all = _fcT(el,'classes').split(',')
+    const seen = new Set();
+    return _fcT(el,'classes').split(',')
       .map(p => _fcClean(p.trim()))
-      .filter(c => c && !c.startsWith('School:') && !c.includes('Ritual') && !_FC.SKIP_CLS.has(c));
-    const bases = new Set(all.filter(c => !c.includes('(')));
-    return all.filter(c => !c.includes('(') || !bases.has(c.split('(')[0].trim()));
+      .filter(c => c && !c.startsWith('School:') && !c.includes('Ritual') && !_FC.SKIP_CLS.has(c))
+      .map(c => c.split('(')[0].trim())
+      .filter(c => c && !seen.has(c) && seen.add(c));
   })();
   let [desc, srcFull] = _fcStripSrc(_fcT(el,'text'));
   let higher = '';
